@@ -1,6 +1,6 @@
 {
   "name": "@tuel/gsap",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -32,5 +32,27 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "GSAP integration components for React. High-performance animations using GreenSock Animation Platform with React-friendly components.",
+  "keywords": [
+    "react",
+    "gsap",
+    "greensock",
+    "animation",
+    "timeline",
+    "tween",
+    "performance",
+    "svg"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/gsap"
+  },
+  "homepage": "https://tuel.ai/docs/gsap",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

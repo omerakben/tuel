@@ -1,6 +1,6 @@
 {
   "name": "@tuel/utils",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -29,5 +29,27 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "Essential utilities and helper functions for TUEL animation components. Type-safe utilities for DOM manipulation, timing, and animation calculations.",
+  "keywords": [
+    "react",
+    "utilities",
+    "helpers",
+    "animation",
+    "typescript",
+    "dom",
+    "timing",
+    "calculations"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/utils"
+  },
+  "homepage": "https://tuel.ai/docs/utils",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tuel/interaction",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Advanced mouse interaction systems, cursor tracking, and gesture control components",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -57,5 +57,10 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "author": "Omer Akben <contact@tuel.ai>",
+  "homepage": "https://tuel.ai/docs/interaction",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

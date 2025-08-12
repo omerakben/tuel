@@ -1,6 +1,6 @@
 {
   "name": "@tuel/text-effects",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -42,5 +42,27 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "Advanced text animation effects for React. Typewriter effects, text reveals, character animations, and dynamic typography components.",
+  "keywords": [
+    "react",
+    "text",
+    "typography",
+    "animation",
+    "typewriter",
+    "reveal",
+    "character",
+    "effects"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/text-effects"
+  },
+  "homepage": "https://tuel.ai/docs/text-effects",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

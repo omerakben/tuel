@@ -31,5 +31,29 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.14.0",
+  "description": "TUEL - Modern TypeScript animation library for React applications. High-performance components for scroll effects, galleries, interactions, and advanced animations.",
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git"
+  },
+  "homepage": "https://tuel.ai",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "animation",
+    "scroll",
+    "gallery",
+    "ui",
+    "components",
+    "framer-motion",
+    "gsap",
+    "three.js",
+    "monorepo"
+  ]
 }

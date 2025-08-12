@@ -1,6 +1,6 @@
 {
   "name": "@tuel/motion",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -38,5 +38,27 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "Advanced motion and animation components for React. Physics-based animations, spring systems, and smooth transitions.",
+  "keywords": [
+    "react",
+    "motion",
+    "animation",
+    "physics",
+    "spring",
+    "transitions",
+    "easing",
+    "framer-motion"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/motion"
+  },
+  "homepage": "https://tuel.ai/docs/motion",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

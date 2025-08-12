@@ -1,6 +1,6 @@
 {
   "name": "@tuel/ui",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "UI components and interactive elements for TUEL",
   "type": "module",
   "main": "dist/index.js",
@@ -45,5 +45,14 @@
     "gallery",
     "menu",
     "carousel"
-  ]
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "homepage": "https://tuel.ai/docs/ui",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tuel/three",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Three.js components and utilities for TUEL",
   "type": "module",
   "main": "dist/index.js",
@@ -49,5 +49,14 @@
     "webgl",
     "animation",
     "components"
-  ]
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "homepage": "https://tuel.ai/docs/three",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@tuel/scroll",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -46,5 +46,28 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "Advanced scroll-triggered animations and effects for React. Includes scroll-based reveals, parallax effects, and smooth scroll interactions.",
+  "keywords": [
+    "react",
+    "scroll",
+    "animation",
+    "parallax",
+    "intersection-observer",
+    "scroll-trigger",
+    "reveal",
+    "effects",
+    "framer-motion"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/scroll"
+  },
+  "homepage": "https://tuel.ai/docs/scroll",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

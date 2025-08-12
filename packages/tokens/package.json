@@ -1,6 +1,6 @@
 {
   "name": "@tuel/tokens",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -26,5 +26,27 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "description": "Design tokens and theme system for TUEL components. Consistent spacing, colors, timing, and animation values across the library.",
+  "keywords": [
+    "design-tokens",
+    "theme",
+    "css",
+    "variables",
+    "spacing",
+    "colors",
+    "timing",
+    "animation"
+  ],
+  "author": "Omer Akben <contact@tuel.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://tuel.ai/docs/tokens",
+  "bugs": {
+    "url": "https://github.com/omerakben/tuel/issues"
   }
 }

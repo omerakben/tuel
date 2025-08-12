@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Additional TUEL-specific ignores
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Turbo
+.turbo/

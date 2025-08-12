@@ -4,12 +4,8 @@ export default defineConfig({
   entry: ["src/index.ts"],
   format: ["cjs", "esm"],
   dts: {
-    resolve: true,
-    tsconfig: "./tsconfig.json",
+    // tsconfig: "./tsconfig.json", // Remove this line
   },
+  external: ["react", "react-dom"],
   clean: true,
-  external: ["react", "react-dom", "framer-motion", "gsap"],
-  banner: {
-    js: '"use client";',
-  },
 });

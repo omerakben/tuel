@@ -1,0 +1,58 @@
+{
+  "name": "@tuel/performance",
+  "version": "0.1.0",
+  "description": "Specialized performance utilities for animations, reduced motion, and optimization controls",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "framer-motion": ">=11.0.0"
+  },
+  "dependencies": {
+    "framer-motion": "^12.23.12"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0"
+  },
+  "keywords": [
+    "react",
+    "animation",
+    "performance",
+    "reduced-motion",
+    "optimization",
+    "frame-control",
+    "accessibility",
+    "ui",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel-animate.git",
+    "directory": "packages/performance"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

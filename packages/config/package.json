@@ -1,0 +1,58 @@
+{
+  "name": "@tuel/config",
+  "version": "0.1.0",
+  "description": "Advanced configuration patterns, animation presets, and settings management",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "framer-motion": ">=11.0.0"
+  },
+  "dependencies": {
+    "framer-motion": "^12.23.12"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0"
+  },
+  "keywords": [
+    "react",
+    "animation",
+    "configuration",
+    "presets",
+    "settings",
+    "themes",
+    "variants",
+    "ui",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omerakben/tuel-animate.git",
+    "directory": "packages/config"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

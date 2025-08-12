@@ -1,6 +1,5 @@
 {
   "buildCommand": "pnpm run build",
-  "outputDirectory": "apps/demo/out",
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
   "framework": "nextjs"

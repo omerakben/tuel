@@ -18,8 +18,8 @@ import {
  */
 function MigrationValidationDemo() {
   // Test @tuel/performance
-  const { isReduced } = useReducedMotion();
-  const { currentFPS, isDropped } = useFrameControl({ targetFPS: 60 });
+  const { reducedMotion } = useReducedMotion();
+  const frameControl = useFrameControl({ targetFPS: 60 });
 
   // Test @tuel/config
   const { config, updateConfig } = useTuelConfig();
@@ -76,9 +76,9 @@ function MigrationValidationDemo() {
       {/* Performance Monitoring */}
       <div style={sectionStyle}>
         <h2>@tuel/performance - Live Monitoring</h2>
-        <p>Reduced Motion: {isReduced ? "Enabled" : "Disabled"}</p>
-        <p>Current FPS: {currentFPS}</p>
-        <p>Frame Dropped: {isDropped ? "Yes" : "No"}</p>
+        <p>Reduced Motion: {reducedMotion ? "Enabled" : "Disabled"}</p>
+        <p>Current FPS: {frameControl.stats.currentFPS.toFixed(1)}</p>
+        <p>Frame Dropped: {frameControl.stats.dropped}</p>
       </div>
 
       {/* Configuration Demo */}

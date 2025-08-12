@@ -1,0 +1,21 @@
+
+
+> @tuel/state@0.1.0 build /Users/omersmac/Desktop/Repos/CODE Templates/tuel/packages/state
+> tsup
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.0
+[34mCLI[39m Using tsup config: /Users/omersmac/Desktop/Repos/CODE Templates/tuel/packages/state/tsup.config.ts
+[34mCLI[39m Target: es2017
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+[32mESM[39m [1mdist/index.mjs [22m[32m15.15 KB[39m
+[32mESM[39m ⚡️ Build success in 56ms
+[32mCJS[39m [1mdist/index.js [22m[32m16.65 KB[39m
+[32mCJS[39m ⚡️ Build success in 65ms
+DTS Build start
+DTS ⚡️ Build success in 1987ms
+DTS dist/index.d.ts  4.63 KB
+DTS dist/index.d.mts 4.63 KB

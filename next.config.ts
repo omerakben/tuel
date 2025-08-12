@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Ensure proper output for deployment
+  output: "standalone",
+  // Disable experimental features that might cause issues
+  experimental: {
+    turbo: {
+      rules: {
+        // Exclude problematic directories
+        "**/.migration-validation/**": ["ignore"],
+      },
+    },
+  },
 };
 
 export default nextConfig;

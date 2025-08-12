@@ -1,0 +1,61 @@
+{
+  "name": "@tuel/gallery",
+  "version": "0.1.0",
+  "description": "Gallery, carousel, and media presentation components with rich interaction patterns",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles": "./dist/index.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "framer-motion": ">=11.0.0",
+    "gsap": ">=3.12.0"
+  },
+  "dependencies": {
+    "@tuel/utils": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  },
+  "keywords": [
+    "react",
+    "gallery",
+    "carousel",
+    "slider",
+    "image-gallery",
+    "video-gallery",
+    "3d-gallery",
+    "media",
+    "animation",
+    "framer-motion",
+    "gsap",
+    "three.js"
+  ],
+  "author": "Tuel",
+  "license": "MIT",
+  "type": "module"
+}

@@ -1,6 +1,5 @@
 // Re-export motion components and utilities
-export * from "motion/dom";
-export * from "motion/react";
+export * from "motion";
 
 // Helper utilities for motion animations
 export const createMotionVariants = {

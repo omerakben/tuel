@@ -28,5 +28,8 @@
     "turbo": "^2.3.3",
     "tsup": "^8.0.1"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "packageManager": "pnpm@10.14.0"
 }

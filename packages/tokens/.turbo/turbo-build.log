@@ -1,0 +1,21 @@
+
+
+> @tuel/tokens@0.0.1 build /Users/omersmac/Desktop/Repos/CODE Templates/tuel/packages/tokens
+> tsup
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.5.0
+[34mCLI[39m Using tsup config: /Users/omersmac/Desktop/Repos/CODE Templates/tuel/packages/tokens/tsup.config.ts
+[34mCLI[39m Target: es2017
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+[32mCJS[39m [1mdist/index.js [22m[32m2.72 KB[39m
+[32mCJS[39m ⚡️ Build success in 8ms
+[32mESM[39m [1mdist/index.mjs [22m[32m1.68 KB[39m
+[32mESM[39m ⚡️ Build success in 9ms
+DTS Build start
+DTS ⚡️ Build success in 848ms
+DTS dist/index.d.ts  2.60 KB
+DTS dist/index.d.mts 2.60 KB

@@ -22,5 +22,3 @@ export const createTimeline = (options?: gsap.TimelineVars) => {
   const { gsap } = require("gsap");
   return gsap.timeline(options);
 };
-
-export type { TimelineVars, TweenVars } from "gsap";

@@ -2107,13 +2107,13 @@ function ScrollMinimap({
 }
 
 // src/components/SofiHealthScroll.tsx
-import { useEffect as useEffect8, useRef as useRef9 } from "react";
-import * as THREE2 from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { cn as cn5 } from "@tuel/utils";
 import gsap7 from "gsap";
 import { ScrollTrigger as ScrollTrigger7 } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import { cn as cn5 } from "@tuel/utils";
+import { useEffect as useEffect8, useRef as useRef9 } from "react";
+import * as THREE2 from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { jsx as jsx9, jsxs as jsxs7 } from "react/jsx-runtime";
 function SofiHealthScroll({
   modelUrl,
@@ -2196,7 +2196,11 @@ function SofiHealthScroll({
       const isMobile = window.innerWidth < 1e3;
       const box = new THREE2.Box3().setFromObject(model);
       const center = box.getCenter(new THREE2.Vector3());
-      const [mobileX, mobileY, mobileZ] = modelSettings.position?.mobile || [1, 0.085, 0];
+      const [mobileX, mobileY, mobileZ] = modelSettings.position?.mobile || [
+        1,
+        0.085,
+        0
+      ];
       const [desktopX, desktopY, desktopZ] = modelSettings.position?.desktop || [-0.4, 0.085, 0];
       model.position.set(
         isMobile ? center.x + modelSize.x * mobileX : -center.x - modelSize.x * desktopX,
@@ -2277,7 +2281,10 @@ function SofiHealthScroll({
       pinSpacing: true,
       scrub: 1,
       onUpdate: ({ progress }) => {
-        const headerProgress = Math.max(0, Math.min(1, (progress - 0.05) / 0.3));
+        const headerProgress = Math.max(
+          0,
+          Math.min(1, (progress - 0.05) / 0.3)
+        );
         gsap7.to(".sofi-header-1", {
           xPercent: progress < 0.05 ? 0 : progress > 0.35 ? -100 : -100 * headerProgress
         });
@@ -2289,7 +2296,10 @@ function SofiHealthScroll({
         const header2XPercent = progress < 0.15 ? 100 : progress > 0.5 ? -200 : 100 - 300 * header2Progress;
         gsap7.to(".sofi-header-2", { xPercent: header2XPercent });
         const scaleX = progress < 0.45 ? 0 : progress > 0.65 ? 100 : 100 * ((progress - 0.45) / 0.2);
-        gsap7.to(".sofi-tooltip .divider", { scaleX: `${scaleX}%`, ...animOptions });
+        gsap7.to(".sofi-tooltip .divider", {
+          scaleX: `${scaleX}%`,
+          ...animOptions
+        });
         tooltips.forEach((tooltip, index) => {
           const elements = [
             `.sofi-tooltip:nth-child(${index + 1}) .icon i`,
@@ -2328,7 +2338,14 @@ function SofiHealthScroll({
       }
       renderer.dispose();
     };
-  }, [modelUrl, animationDuration, staggerDelay, pinHeight, modelSettings, tooltips]);
+  }, [
+    modelUrl,
+    animationDuration,
+    staggerDelay,
+    pinHeight,
+    modelSettings,
+    tooltips
+  ]);
   return /* @__PURE__ */ jsx9("div", { className: cn5("sofi-health-scroll", className), ref: containerRef, children: /* @__PURE__ */ jsxs7("div", { className: "sofi-product-overview", children: [
     /* @__PURE__ */ jsx9("div", { className: "sofi-model-container", ref: modelContainerRef }),
     /* @__PURE__ */ jsx9("div", { className: "sofi-header-1", children: /* @__PURE__ */ jsx9("h1", { children: headerTexts.header1 }) }),
@@ -2347,10 +2364,10 @@ function SofiHealthScroll({
 }
 
 // src/components/TheFirstTheLastScroll.tsx
-import { useEffect as useEffect9, useRef as useRef10 } from "react";
+import { cn as cn6 } from "@tuel/utils";
 import gsap8 from "gsap";
 import { ScrollTrigger as ScrollTrigger8 } from "gsap/ScrollTrigger";
-import { cn as cn6 } from "@tuel/utils";
+import { useEffect as useEffect9, useRef as useRef10 } from "react";
 import { jsx as jsx10 } from "react/jsx-runtime";
 function TheFirstTheLastScroll({
   cards,

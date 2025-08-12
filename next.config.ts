@@ -9,16 +9,11 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Ensure proper output for deployment
-  output: "standalone",
-  // Disable experimental features that might cause issues
-  experimental: {
-    turbo: {
-      rules: {
-        // Exclude problematic directories
-        "**/.migration-validation/**": ["ignore"],
-      },
-    },
+  // Try trailingSlash to help with routing
+  trailingSlash: true,
+  // Disable image optimization for simpler deployment
+  images: {
+    unoptimized: true,
   },
 };
 

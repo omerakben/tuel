@@ -1,6 +1,6 @@
 {
   "name": "@tuel/performance",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Specialized performance utilities for animations, reduced motion, and optimization controls",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

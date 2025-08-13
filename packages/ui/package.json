@@ -1,6 +1,6 @@
 {
   "name": "@tuel/ui",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "UI components and interactive elements for TUEL",
   "type": "module",
   "main": "dist/index.js",

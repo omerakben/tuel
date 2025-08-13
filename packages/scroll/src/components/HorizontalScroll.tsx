@@ -1,9 +1,21 @@
 import { cn } from "@tuel/utils";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useReducedMotion } from "@tuel/performance";
 import { ReactNode, useEffect, useRef } from "react";
+import { canUseDOM } from "../hooks/useSSR";
 
-gsap.registerPlugin(ScrollTrigger);
+// Lazy load GSAP only in browser
+let gsap: any;
+let ScrollTrigger: any;
+
+if (canUseDOM()) {
+  import("gsap").then((mod) => {
+    gsap = mod.gsap;
+    import("gsap/ScrollTrigger").then((st) => {
+      ScrollTrigger = st.ScrollTrigger;
+      gsap.registerPlugin(ScrollTrigger);
+    });
+  });
+}
 
 export interface HorizontalScrollProps {
   children: ReactNode;
@@ -38,8 +50,14 @@ export function HorizontalScroll({
 }: HorizontalScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    // Skip animations if SSR or user prefers reduced motion
+    if (!canUseDOM() || prefersReducedMotion || !gsap || !ScrollTrigger) {
+      return;
+    }
+
     const container = containerRef.current;
     const scrollElement = scrollRef.current;
 
@@ -88,6 +106,7 @@ export function HorizontalScroll({
     end,
     onUpdate,
     onComplete,
+    prefersReducedMotion,
   ]);
 
   return (

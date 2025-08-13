@@ -1,5 +1,15 @@
 # @tuel/gallery
 
+## 1.1.3
+
+### Patch Changes
+
+- Fix overlay hover effect not showing images
+
+  - Fixed issue where images appeared as black boxes when overlay hover effect was selected
+  - Changed from deprecated Tailwind bg-opacity syntax to modern slash notation (bg-black/0)
+  - Added pointer-events control to prevent overlay interference with image interactions
+
 ## 1.1.0
 
 ### Minor Changes

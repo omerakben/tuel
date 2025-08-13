@@ -1,6 +1,6 @@
 {
   "name": "@tuel/gallery",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Gallery, carousel, and media presentation components with rich interaction patterns",
   "main": "dist/index.js",
   "module": "dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@tuel/scroll",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Advanced scroll-triggered animations and effects for React.",
   "license": "MIT",
   "author": "Omer Akben <contact@tuel.ai>",
@@ -23,7 +23,7 @@
   ],
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -45,8 +45,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@tuel/utils": "^1.1.0",
-    "@tuel/performance": "^1.1.0"
+    "@tuel/utils": "^1.1.2",
+    "@tuel/performance": "^1.1.2"
   },
   "peerDependencies": {
     "react": ">=18",

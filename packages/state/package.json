@@ -1,6 +1,6 @@
 {
   "name": "@tuel/state",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Complex animation state management, sequencing, and lifecycle controls",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

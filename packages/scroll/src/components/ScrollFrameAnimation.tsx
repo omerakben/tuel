@@ -161,6 +161,7 @@ export function ScrollFrameAnimation({
     startTrigger,
     endTrigger,
     onProgress,
+    renderFrame,
   ]);
 
   if (!isClient) {

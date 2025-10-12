@@ -52,3 +52,5 @@ lerna-debug.log*
 # Package manager
 .npm
 .yarn
+README_OLD_INTERNAL.md
+README_DEV_NOTES.md

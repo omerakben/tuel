@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { HorizontalScroll, HorizontalScrollItem } from './HorizontalScroll';
+import "@testing-library/jest-dom";
+import { render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { HorizontalScroll, HorizontalScrollItem } from "./HorizontalScroll";
 
 // Mock GSAP modules
-vi.mock('gsap', () => ({
+vi.mock("gsap", () => ({
   gsap: {
     to: vi.fn(() => ({
       kill: vi.fn(),
@@ -12,7 +13,7 @@ vi.mock('gsap', () => ({
   },
 }));
 
-vi.mock('gsap/ScrollTrigger', () => ({
+vi.mock("gsap/ScrollTrigger", () => ({
   ScrollTrigger: {
     create: vi.fn(),
     refresh: vi.fn(),
@@ -21,11 +22,11 @@ vi.mock('gsap/ScrollTrigger', () => ({
 }));
 
 // Mock performance hook
-vi.mock('@tuel/performance', () => ({
+vi.mock("@tuel/performance", () => ({
   useReducedMotion: vi.fn(() => false),
 }));
 
-describe('HorizontalScroll', () => {
+describe("HorizontalScroll", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -34,7 +35,7 @@ describe('HorizontalScroll', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders children correctly', () => {
+  it("renders children correctly", () => {
     render(
       <HorizontalScroll>
         <div data-testid="child-1">Child 1</div>
@@ -42,11 +43,11 @@ describe('HorizontalScroll', () => {
       </HorizontalScroll>
     );
 
-    expect(screen.getByTestId('child-1')).toBeInTheDocument();
-    expect(screen.getByTestId('child-2')).toBeInTheDocument();
+    expect(screen.getByTestId("child-1")).toBeInTheDocument();
+    expect(screen.getByTestId("child-2")).toBeInTheDocument();
   });
 
-  it('applies custom class names', () => {
+  it("applies custom class names", () => {
     const { container } = render(
       <HorizontalScroll
         containerClassName="custom-container"
@@ -56,18 +57,18 @@ describe('HorizontalScroll', () => {
       </HorizontalScroll>
     );
 
-    const containerEl = container.querySelector('.custom-container');
-    const scrollEl = container.querySelector('.custom-scroll');
+    const containerEl = container.querySelector(".custom-container");
+    const scrollEl = container.querySelector(".custom-scroll");
 
     expect(containerEl).toBeInTheDocument();
     expect(scrollEl).toBeInTheDocument();
   });
 
-  it('respects prefers-reduced-motion', async () => {
-    const { useReducedMotion } = await import('@tuel/performance');
+  it("respects prefers-reduced-motion", async () => {
+    const { useReducedMotion } = await import("@tuel/performance");
     (useReducedMotion as any).mockReturnValue(true);
 
-    const { gsap } = await import('gsap');
+    const { gsap } = await import("gsap");
 
     render(
       <HorizontalScroll>
@@ -81,9 +82,9 @@ describe('HorizontalScroll', () => {
     });
   });
 
-  it('calls onUpdate callback with progress', async () => {
+  it("calls onUpdate callback with progress", async () => {
     const onUpdate = vi.fn();
-    
+
     render(
       <HorizontalScroll onUpdate={onUpdate}>
         <div>Content</div>
@@ -93,34 +94,34 @@ describe('HorizontalScroll', () => {
     // Component will attempt to set up GSAP after mount
     await waitFor(() => {
       // Check that component rendered without errors
-      expect(screen.getByText('Content')).toBeInTheDocument();
+      expect(screen.getByText("Content")).toBeInTheDocument();
     });
   });
 });
 
-describe('HorizontalScrollItem', () => {
-  it('renders children correctly', () => {
+describe("HorizontalScrollItem", () => {
+  it("renders children correctly", () => {
     render(
       <HorizontalScrollItem>
         <span>Item Content</span>
       </HorizontalScrollItem>
     );
 
-    expect(screen.getByText('Item Content')).toBeInTheDocument();
+    expect(screen.getByText("Item Content")).toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
+  it("applies custom className", () => {
     const { container } = render(
       <HorizontalScrollItem className="custom-item">
         <span>Item</span>
       </HorizontalScrollItem>
     );
 
-    const item = container.querySelector('.custom-item');
+    const item = container.querySelector(".custom-item");
     expect(item).toBeInTheDocument();
   });
 
-  it('sets data-width attribute', () => {
+  it("sets data-width attribute", () => {
     const { container } = render(
       <HorizontalScrollItem width="300px">
         <span>Item</span>

@@ -33,11 +33,11 @@ import { cn } from '@tuel/utils';
 cn('base', 'active'); // => 'base active'
 
 // Conditional classes
-cn('base', isActive && 'active', isDisabled && 'disabled'); 
+cn('base', isActive && 'active', isDisabled && 'disabled');
 // => 'base active' (when isActive is true)
 
 // With undefined/null/false
-cn('base', undefined, null, false, 'valid'); 
+cn('base', undefined, null, false, 'valid');
 // => 'base valid'
 
 // Practical example
@@ -68,6 +68,93 @@ if (isClient) {
 **Constants:**
 - `isServer: boolean` - True when running on server (Node.js)
 - `isClient: boolean` - True when running in browser
+
+### `debounce(func, wait)`
+
+Creates a debounced function that delays invoking `func` until after `wait` milliseconds.
+
+```typescript
+import { debounce } from '@tuel/utils';
+
+const handleResize = debounce(() => {
+  console.log('Window resized');
+}, 300);
+
+window.addEventListener('resize', handleResize);
+```
+
+**Parameters:**
+- `func: Function` - The function to debounce
+- `wait: number` - Milliseconds to delay
+
+### `throttle(func, limit)`
+
+Creates a throttled function that only invokes `func` at most once per `limit` milliseconds.
+
+```typescript
+import { throttle } from '@tuel/utils';
+
+const handleScroll = throttle(() => {
+  console.log('Scroll event');
+}, 100);
+
+window.addEventListener('scroll', handleScroll);
+```
+
+**Parameters:**
+- `func: Function` - The function to throttle
+- `limit: number` - Milliseconds to throttle invocations
+
+### `clamp(value, min, max)`
+
+Clamps a number between minimum and maximum values.
+
+```typescript
+import { clamp } from '@tuel/utils';
+
+clamp(5, 0, 10);   // => 5
+clamp(-5, 0, 10);  // => 0
+clamp(15, 0, 10);  // => 10
+```
+
+**Parameters:**
+- `value: number` - Number to clamp
+- `min: number` - Minimum value
+- `max: number` - Maximum value
+
+### `lerp(start, end, t)`
+
+Performs linear interpolation between two values.
+
+```typescript
+import { lerp } from '@tuel/utils';
+
+lerp(0, 100, 0.5);   // => 50
+lerp(0, 100, 0.25);  // => 25
+lerp(10, 20, 0.75);  // => 17.5
+```
+
+**Parameters:**
+- `start: number` - Start value
+- `end: number` - End value
+- `t: number` - Interpolation factor (typically 0-1)
+
+### `range(start, end, step?)`
+
+Creates an array of numbers from start to end (inclusive).
+
+```typescript
+import { range } from '@tuel/utils';
+
+range(1, 5);       // => [1, 2, 3, 4, 5]
+range(0, 10, 2);   // => [0, 2, 4, 6, 8, 10]
+range(5, 1, -1);   // => [5, 4, 3, 2, 1]
+```
+
+**Parameters:**
+- `start: number` - Start value
+- `end: number` - End value (inclusive)
+- `step?: number` - Step increment (default: 1)
 
 ## Usage Examples
 

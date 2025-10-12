@@ -10,3 +10,6 @@ export type {
   CursorFollowerProps,
   CursorState,
 } from "./useCursorFollower";
+
+export { MagneticButton } from "./components/MagneticButton";
+export type { MagneticButtonProps } from "./components/MagneticButton";

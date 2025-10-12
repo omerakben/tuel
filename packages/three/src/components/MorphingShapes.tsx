@@ -1,7 +1,7 @@
 import { MeshWobbleMaterial, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { cn } from "@tuel/utils";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 interface MorphingMeshProps {
@@ -70,6 +70,13 @@ function MorphingMesh({
     return geos;
   }, [morphTargets]);
 
+  // Cleanup geometries on unmount
+  useEffect(() => {
+    return () => {
+      geometries.forEach((geo) => geo.dispose());
+    };
+  }, [geometries]);
+
   // Create base geometry with morph targets
   const geometry = useMemo(() => {
     if (geometries.length === 0) return null;
@@ -98,6 +105,13 @@ function MorphingMesh({
 
     return baseGeo;
   }, [geometries]);
+
+  // Cleanup geometry on unmount
+  useEffect(() => {
+    return () => {
+      if (geometry) geometry.dispose();
+    };
+  }, [geometry]);
 
   // Handle morphing animation
   useFrame((state) => {

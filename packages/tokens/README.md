@@ -39,6 +39,17 @@ animations.duration.slower   // 800ms
 animations.duration.slowest  // 1000ms
 ```
 
+**Visual Reference:**
+
+| Duration | Value | Use Case |
+|----------|-------|----------|
+| `instant` | 0ms | Immediate state changes, no animation |
+| `fast` | 200ms | Micro-interactions, hover effects |
+| `normal` | 300ms | Standard transitions, default choice |
+| `slow` | 500ms | Complex animations, page transitions |
+| `slower` | 800ms | Emphasized animations, attention-grabbing |
+| `slowest` | 1000ms | Dramatic effects, hero animations |
+
 #### Easing Functions
 
 Available in both CSS and Framer Motion formats:
@@ -47,17 +58,44 @@ Available in both CSS and Framer Motion formats:
 import { animations } from '@tuel/tokens';
 
 // For CSS animations
+animations.easing.css.linear        // "linear"
 animations.easing.css.easeIn        // "cubic-bezier(0.4, 0, 1, 1)"
 animations.easing.css.easeOut       // "cubic-bezier(0, 0, 0.2, 1)"
 animations.easing.css.easeInOut     // "cubic-bezier(0.4, 0, 0.2, 1)"
+animations.easing.css.easeInQuad    // "cubic-bezier(0.55, 0.085, 0.68, 0.53)"
+animations.easing.css.easeOutQuad   // "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+animations.easing.css.easeInOutQuad // "cubic-bezier(0.455, 0.03, 0.515, 0.955)"
 animations.easing.css.easeInExpo    // "cubic-bezier(0.95, 0.05, 0.795, 0.035)"
 animations.easing.css.easeOutExpo   // "cubic-bezier(0.19, 1, 0.22, 1)"
+animations.easing.css.easeInOutExpo // "cubic-bezier(1, 0, 0, 1)"
 
 // For Framer Motion
-animations.easing.motion.easeIn     // [0.4, 0, 1, 1]
-animations.easing.motion.easeOut    // [0, 0, 0.2, 1]
-animations.easing.motion.easeInOut  // [0.4, 0, 0.2, 1]
+animations.easing.motion.linear        // "linear"
+animations.easing.motion.easeIn        // [0.4, 0, 1, 1]
+animations.easing.motion.easeOut       // [0, 0, 0.2, 1]
+animations.easing.motion.easeInOut     // [0.4, 0, 0.2, 1]
+animations.easing.motion.easeInQuad    // [0.55, 0.085, 0.68, 0.53]
+animations.easing.motion.easeOutQuad   // [0.25, 0.46, 0.45, 0.94]
+animations.easing.motion.easeInOutQuad // [0.455, 0.03, 0.515, 0.955]
+animations.easing.motion.easeInExpo    // [0.95, 0.05, 0.795, 0.035]
+animations.easing.motion.easeOutExpo   // [0.19, 1, 0.22, 1]
+animations.easing.motion.easeInOutExpo // [1, 0, 0, 1]
 ```
+
+**Easing Behavior Guide:**
+
+| Easing | Behavior | Best For |
+|--------|----------|----------|
+| `linear` | Constant speed | Loading indicators, progress bars |
+| `easeIn` | Slow start, fast end | Elements leaving viewport |
+| `easeOut` | Fast start, slow end | Elements entering viewport (most common) |
+| `easeInOut` | Slow start/end | Continuous loops, reversible animations |
+| `easeInQuad` | Gentle acceleration | Subtle entrances |
+| `easeOutQuad` | Gentle deceleration | Subtle exits |
+| `easeInOutQuad` | Gentle both ends | Smooth bidirectional |
+| `easeInExpo` | Dramatic acceleration | Powerful entrances |
+| `easeOutExpo` | Dramatic deceleration | Powerful exits |
+| `easeInOutExpo` | Dramatic both ends | High-impact effects |
 
 #### Spring Presets
 
@@ -71,6 +109,15 @@ animations.spring.wobbly  // { type: "spring", stiffness: 180, damping: 12 }
 animations.spring.stiff   // { type: "spring", stiffness: 300, damping: 20 }
 animations.spring.slow    // { type: "spring", stiffness: 40, damping: 20 }
 ```
+
+**Spring Characteristics:**
+
+| Spring | Stiffness | Damping | Behavior | Use Case |
+|--------|-----------|---------|----------|----------|
+| `gentle` | 100 | 15 | Soft, smooth | Modal entrances, overlays |
+| `wobbly` | 180 | 12 | Bouncy, playful | Buttons, interactive elements |
+| `stiff` | 300 | 20 | Quick, snappy | Drawers, dropdowns |
+| `slow` | 40 | 20 | Gradual, elastic | Large components, page transitions |
 
 ### Breakpoints
 
@@ -86,6 +133,17 @@ breakpoints.lg   // 1024px
 breakpoints.xl   // 1280px
 breakpoints['2xl'] // 1536px
 ```
+
+**Breakpoint Scale:**
+
+| Name | Value | Target Devices |
+|------|-------|----------------|
+| `xs` | 375px | Small phones (iPhone SE) |
+| `sm` | 640px | Large phones, small tablets |
+| `md` | 768px | Tablets (iPad portrait) |
+| `lg` | 1024px | Tablets landscape, small laptops |
+| `xl` | 1280px | Laptops, desktops |
+| `2xl` | 1536px | Large desktops, 4K displays |
 
 ### Z-Index Scale
 
@@ -103,6 +161,19 @@ zIndex.popover   // 50
 zIndex.tooltip   // 60
 zIndex.toast     // 70
 ```
+
+**Layer Hierarchy:**
+
+| Layer | Value | Purpose |
+|-------|-------|---------|
+| `base` | 0 | Default stacking, regular content |
+| `dropdown` | 10 | Dropdown menus, select options |
+| `sticky` | 20 | Sticky headers, fixed navigation |
+| `overlay` | 30 | Modal backdrops, overlays |
+| `modal` | 40 | Modal dialogs, lightboxes |
+| `popover` | 50 | Popovers, context menus |
+| `tooltip` | 60 | Tooltips, hints |
+| `toast` | 70 | Toast notifications (highest) |
 
 ## Usage Examples
 

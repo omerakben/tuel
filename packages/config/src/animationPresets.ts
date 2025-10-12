@@ -20,6 +20,8 @@ export interface AnimationPresets {
   scaleIn: AnimationPreset;
   rotateIn: AnimationPreset;
   bounceIn: AnimationPreset;
+  zoomIn: AnimationPreset;
+  flipIn: AnimationPreset;
 
   // Exit animations
   fadeOut: AnimationPreset;
@@ -30,18 +32,26 @@ export interface AnimationPresets {
   scaleOut: AnimationPreset;
   rotateOut: AnimationPreset;
   bounceOut: AnimationPreset;
+  zoomOut: AnimationPreset;
+  flipOut: AnimationPreset;
 
   // Attention animations
   pulse: AnimationPreset;
   shake: AnimationPreset;
   wobble: AnimationPreset;
   flash: AnimationPreset;
+  bounce: AnimationPreset;
+  swing: AnimationPreset;
+  rubberBand: AnimationPreset;
+  jello: AnimationPreset;
 
   // Hover animations
   lift: AnimationPreset;
   grow: AnimationPreset;
   shrink: AnimationPreset;
   tilt: AnimationPreset;
+  glow: AnimationPreset;
+  float: AnimationPreset;
 }
 
 /**
@@ -352,6 +362,152 @@ export const animationPresets: AnimationPresets = {
       },
     },
   },
+
+  // New entrance animations
+  zoomIn: {
+    name: "zoomIn",
+    description: "Zoom in animation with scale",
+    duration: 500,
+    ease: [0.25, 0.46, 0.45, 0.94],
+    variants: {
+      initial: { scale: 0, opacity: 0 },
+      animate: { scale: 1, opacity: 1 },
+      exit: { scale: 0, opacity: 0 },
+    },
+  },
+
+  flipIn: {
+    name: "flipIn",
+    description: "Flip in animation",
+    duration: 600,
+    ease: "easeOut",
+    variants: {
+      initial: { rotateX: -90, opacity: 0 },
+      animate: { rotateX: 0, opacity: 1 },
+      exit: { rotateX: 90, opacity: 0 },
+    },
+  },
+
+  // New exit animations
+  zoomOut: {
+    name: "zoomOut",
+    description: "Zoom out animation with scale",
+    duration: 400,
+    ease: [0.55, 0.055, 0.675, 0.19],
+    variants: {
+      initial: { scale: 1, opacity: 1 },
+      animate: { scale: 0, opacity: 0 },
+    },
+  },
+
+  flipOut: {
+    name: "flipOut",
+    description: "Flip out animation",
+    duration: 500,
+    ease: "easeIn",
+    variants: {
+      initial: { rotateX: 0, opacity: 1 },
+      animate: { rotateX: 90, opacity: 0 },
+    },
+  },
+
+  // New attention animations
+  bounce: {
+    name: "bounce",
+    description: "Bouncing animation",
+    duration: 1000,
+    ease: "easeInOut",
+    variants: {
+      animate: {
+        y: [0, -20, 0, -10, 0],
+        transition: {
+          duration: 1,
+          ease: "easeInOut",
+        },
+      },
+    },
+  },
+
+  swing: {
+    name: "swing",
+    description: "Swinging animation",
+    duration: 1000,
+    ease: "easeInOut",
+    variants: {
+      animate: {
+        rotate: [0, 15, -10, 5, -5, 0],
+        transition: {
+          duration: 1,
+          ease: "easeInOut",
+        },
+      },
+    },
+  },
+
+  rubberBand: {
+    name: "rubberBand",
+    description: "Rubber band stretching animation",
+    duration: 1000,
+    ease: "easeInOut",
+    variants: {
+      animate: {
+        scaleX: [1, 1.25, 0.75, 1.15, 0.95, 1],
+        scaleY: [1, 0.75, 1.25, 0.85, 1.05, 1],
+        transition: {
+          duration: 1,
+          ease: "easeInOut",
+        },
+      },
+    },
+  },
+
+  jello: {
+    name: "jello",
+    description: "Jello wobbling animation",
+    duration: 1000,
+    ease: "easeInOut",
+    variants: {
+      animate: {
+        skewX: [0, -12.5, 6.25, -3.125, 1.5625, 0],
+        skewY: [0, -12.5, 6.25, -3.125, 1.5625, 0],
+        transition: {
+          duration: 1,
+          ease: "easeInOut",
+        },
+      },
+    },
+  },
+
+  // New hover animations
+  glow: {
+    name: "glow",
+    description: "Glow effect on hover",
+    duration: 300,
+    ease: "easeOut",
+    variants: {
+      hover: {
+        boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)",
+        transition: { duration: 0.3, ease: "easeOut" },
+      },
+    },
+  },
+
+  float: {
+    name: "float",
+    description: "Floating animation on hover",
+    duration: 2000,
+    ease: "easeInOut",
+    variants: {
+      hover: {
+        y: [0, -10, 0],
+        transition: {
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        },
+      },
+    },
+  },
 };
 
 /**
@@ -377,6 +533,8 @@ export function getPresetsByCategory(
       "scaleIn",
       "rotateIn",
       "bounceIn",
+      "zoomIn",
+      "flipIn",
     ],
     exit: [
       "fadeOut",
@@ -387,9 +545,11 @@ export function getPresetsByCategory(
       "scaleOut",
       "rotateOut",
       "bounceOut",
+      "zoomOut",
+      "flipOut",
     ],
-    attention: ["pulse", "shake", "wobble", "flash"],
-    hover: ["lift", "grow", "shrink", "tilt"],
+    attention: ["pulse", "shake", "wobble", "flash", "bounce", "swing", "rubberBand", "jello"],
+    hover: ["lift", "grow", "shrink", "tilt", "glow", "float"],
   };
 
   return categoryMap[category].map(

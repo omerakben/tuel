@@ -1,3 +1,8 @@
+/**
+ * Animation tokens for TUEL components
+ * @package @tuel/tokens
+ */
+
 export const animations = {
   duration: {
     instant: 0,
@@ -43,6 +48,10 @@ export const animations = {
   },
 } as const;
 
+/**
+ * Responsive breakpoint values in pixels
+ * @package @tuel/tokens
+ */
 export const breakpoints = {
   xs: 375,
   sm: 640,
@@ -52,6 +61,10 @@ export const breakpoints = {
   "2xl": 1536,
 } as const;
 
+/**
+ * Z-index layering scale for UI components
+ * @package @tuel/tokens
+ */
 export const zIndex = {
   base: 0,
   dropdown: 10,
@@ -62,3 +75,41 @@ export const zIndex = {
   tooltip: 60,
   toast: 70,
 } as const;
+
+// Type exports for strict typing
+
+/** Animation duration value in milliseconds */
+export type AnimationDuration = typeof animations.duration[keyof typeof animations.duration];
+
+/** Animation duration key */
+export type AnimationDurationKey = keyof typeof animations.duration;
+
+/** CSS easing function string (cubic-bezier) */
+export type CSSEasing = typeof animations.easing.css[keyof typeof animations.easing.css];
+
+/** CSS easing function key */
+export type CSSEasingKey = keyof typeof animations.easing.css;
+
+/** Framer Motion easing value (array or string) */
+export type MotionEasing = typeof animations.easing.motion[keyof typeof animations.easing.motion];
+
+/** Framer Motion easing key */
+export type MotionEasingKey = keyof typeof animations.easing.motion;
+
+/** Spring animation configuration */
+export type SpringConfig = typeof animations.spring[keyof typeof animations.spring];
+
+/** Spring animation preset key */
+export type SpringKey = keyof typeof animations.spring;
+
+/** Breakpoint value in pixels */
+export type Breakpoint = typeof breakpoints[keyof typeof breakpoints];
+
+/** Breakpoint key */
+export type BreakpointKey = keyof typeof breakpoints;
+
+/** Z-index layer value */
+export type ZIndex = typeof zIndex[keyof typeof zIndex];
+
+/** Z-index layer key */
+export type ZIndexKey = keyof typeof zIndex;

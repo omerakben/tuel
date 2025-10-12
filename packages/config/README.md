@@ -1,32 +1,32 @@
 # @tuel/config
 
-Advanced configuration system for TUEL animations. Manage animation presets, themes, and global settings across your application.
-
-[![npm version](https://img.shields.io/npm/v/@tuel/config.svg)](https://www.npmjs.com/package/@tuel/config)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## Features
-
-- 🎨 **Animation Presets** - Pre-configured animation styles
-- 🎭 **Theme System** - Light/dark themes with custom variants
-- ⚙️ **Global Config** - Centralized settings management
-- 🔧 **Type-safe** - Full TypeScript support
-- 🎯 **Context API** - React context for easy config sharing
-- 🌳 **Tree-shakeable** - Import only what you need
+Advanced configuration patterns, animation presets, and settings management for TUEL animation library.
 
 ## Installation
 
 ```bash
+npm install @tuel/config
+# or
+yarn add @tuel/config
+# or
 pnpm add @tuel/config
-
-# Peer dependencies
-pnpm add react react-dom framer-motion
 ```
+
+## Features
+
+- 🎨 **Theme System** - Light/dark themes with customizable configurations
+- ⚡ **Animation Presets** - 26+ pre-built animation patterns (entrance, exit, attention, hover)
+- 🔧 **Configuration Provider** - Global settings management with React Context
+- 💾 **Persistence** - Optional localStorage support for user preferences
+- ♿ **Accessibility** - Automatic reduced motion detection
+- 🌓 **Auto Theme Detection** - System preference detection for light/dark mode
+- 📦 **SSR Safe** - Works seamlessly with server-side rendering
 
 ## Quick Start
 
-### Basic Setup
+### Configuration Provider
+
+Wrap your app with `TuelConfigProvider` to enable global configuration:
 
 ```tsx
 import { TuelConfigProvider } from '@tuel/config';
@@ -34,14 +34,40 @@ import { TuelConfigProvider } from '@tuel/config';
 function App() {
   return (
     <TuelConfigProvider
-      config={{
-        animationDuration: 'normal',
-        reducedMotion: false,
-        theme: 'dark',
+      initialConfig={{
+        globalDuration: 300,
+        theme: 'auto',
+        enableDebug: false,
       }}
+      persistConfig={true}
     >
       <YourApp />
     </TuelConfigProvider>
+  );
+}
+```
+
+### Using Configuration
+
+Access configuration values in any component:
+
+```tsx
+import { useTuelConfig, useAnimationConfig } from '@tuel/config';
+
+function MyComponent() {
+  const { config, updateConfig } = useTuelConfig();
+  const animConfig = useAnimationConfig();
+
+  return (
+    <motion.div
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: animConfig.duration / 1000,
+        ease: animConfig.ease,
+      }}
+    >
+      Content
+    </motion.div>
   );
 }
 ```
@@ -50,353 +76,450 @@ function App() {
 
 ### TuelConfigProvider
 
-Provides configuration context to all child components.
+Main configuration provider component.
+
+**Props:**
 
 ```tsx
-import { TuelConfigProvider } from '@tuel/config';
+interface TuelConfigProviderProps {
+  children: React.ReactNode;
+  initialConfig?: Partial<TuelConfig>;
+  persistConfig?: boolean; // Default: true
+  storageKey?: string; // Default: 'tuel-config'
+}
+```
 
+**Example:**
+
+```tsx
 <TuelConfigProvider
-  config={{
-    animationDuration: 'fast' | 'normal' | 'slow',
-    reducedMotion: boolean,
-    theme: 'light' | 'dark' | 'auto',
-    customPresets: {},
+  initialConfig={{
+    globalDuration: 500,
+    globalEase: [0.25, 0.46, 0.45, 0.94],
+    theme: 'dark',
+    enableOptimizations: true,
   }}
+  persistConfig={true}
+  storageKey="my-app-tuel-config"
 >
   <App />
 </TuelConfigProvider>
 ```
 
-**Props:**
+### Configuration Options
 
-```typescript
-interface TuelConfigProviderProps {
-  config?: Partial<TuelConfig>;
-  children: ReactNode;
-}
-
+```tsx
 interface TuelConfig {
-  animationDuration?: 'fast' | 'normal' | 'slow';
-  reducedMotion?: boolean;
-  theme?: 'light' | 'dark' | 'auto';
-  customPresets?: Record<string, AnimationPreset>;
+  // Animation settings
+  globalDuration: number; // Default: 300ms
+  globalEase: string | number[]; // Default: 'easeInOut'
+  reducedMotion: boolean; // Auto-detected
+
+  // Performance settings
+  enableFrameControl: boolean; // Default: true
+  targetFPS: number; // Default: 60
+  enableOptimizations: boolean; // Default: true
+
+  // Theme settings
+  theme: 'light' | 'dark' | 'auto'; // Default: 'auto'
+  colorScheme: Record<string, string>;
+
+  // Debug settings
+  enableDebug: boolean; // Default: false
+  showPerformanceMetrics: boolean; // Default: false
+  logAnimations: boolean; // Default: false
+
+  // Custom settings
+  custom: Record<string, any>;
 }
 ```
 
-### useTuelConfig
+### Hooks
 
-Hook to access current configuration.
+#### `useTuelConfig()`
+
+Access and modify configuration:
+
+```tsx
+const { config, updateConfig, resetConfig, getConfigValue, setConfigValue } = useTuelConfig();
+
+// Update multiple values
+updateConfig({
+  globalDuration: 500,
+  theme: 'dark',
+});
+
+// Update single value
+setConfigValue('globalDuration', 400);
+
+// Get single value
+const duration = getConfigValue('globalDuration');
+
+// Reset to defaults
+resetConfig();
+```
+
+#### `useAnimationConfig()`
+
+Get animation-specific configuration with reduced motion support:
+
+```tsx
+const { duration, ease, reducedMotion, shouldAnimate } = useAnimationConfig();
+
+// Use in animations
+<motion.div
+  animate={{ x: shouldAnimate ? 100 : 0 }}
+  transition={{ duration: duration / 1000, ease }}
+/>
+```
+
+#### `useConfigValue<K>(key: K)`
+
+Get a specific configuration value with type safety:
+
+```tsx
+const duration = useConfigValue('globalDuration'); // number
+const theme = useConfigValue('theme'); // 'light' | 'dark' | 'auto'
+```
+
+## Theme System
+
+### Using Built-in Themes
+
+```tsx
+import { useTheme, useThemeAnimation } from '@tuel/config';
+
+function ThemedComponent() {
+  // Get theme configuration
+  const theme = useTheme('modern', 'dark');
+  
+  // Get theme animation helpers
+  const anim = useThemeAnimation(theme);
+
+  return (
+    <motion.div
+      style={{
+        backgroundColor: theme.colors.background,
+        color: theme.colors.text,
+        borderRadius: theme.borderRadius.md,
+        padding: theme.spacing.lg,
+      }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: anim.duration('normal') / 1000,
+        ease: anim.easing('easeOut'),
+      }}
+    >
+      Content
+    </motion.div>
+  );
+}
+```
+
+### Built-in Themes
+
+- **modern** - Contemporary design with vibrant colors
+- **minimal** - Clean, minimal aesthetic with subtle animations
+
+Each theme includes light and dark variants.
+
+### Theme Configuration
+
+```tsx
+interface ThemeConfig {
+  name: string;
+  colors: Record<string, string>;
+  animations: {
+    duration: { fast: 150, normal: 300, slow: 500, slower: 750 };
+    easing: Record<string, string | number[]>;
+    timing: { stagger: number, delay: number };
+  };
+  spacing: Record<string, number>;
+  borderRadius: Record<string, number>;
+  shadows: Record<string, string>;
+}
+```
+
+### Creating Custom Themes
+
+```tsx
+import { createTheme } from '@tuel/config';
+
+const customTheme = createTheme('modern', {
+  light: {
+    colors: {
+      primary: '#ff6b6b',
+      secondary: '#4ecdc4',
+      accent: '#ffe66d',
+    },
+    animations: {
+      duration: {
+        fast: 100,
+        normal: 250,
+      },
+    },
+  },
+  dark: {
+    colors: {
+      primary: '#ff8787',
+      secondary: '#5fd9cf',
+      accent: '#ffef9f',
+    },
+  },
+});
+
+// Use custom theme
+const theme = customTheme.light;
+```
+
+## Animation Presets
+
+### Available Presets
+
+#### Entrance Animations (10)
+- `fadeIn` - Gentle fade in
+- `slideInUp` - Slide from bottom
+- `slideInDown` - Slide from top
+- `slideInLeft` - Slide from left
+- `slideInRight` - Slide from right
+- `scaleIn` - Scale up
+- `rotateIn` - Rotate in
+- `bounceIn` - Bounce in with elastic effect
+- `zoomIn` - Zoom in with scale
+- `flipIn` - 3D flip in
+
+#### Exit Animations (10)
+- `fadeOut` - Gentle fade out
+- `slideOutUp` - Slide to top
+- `slideOutDown` - Slide to bottom
+- `slideOutLeft` - Slide to left
+- `slideOutRight` - Slide to right
+- `scaleOut` - Scale down
+- `rotateOut` - Rotate out
+- `bounceOut` - Bounce out
+- `zoomOut` - Zoom out with scale
+- `flipOut` - 3D flip out
+
+#### Attention Animations (8)
+- `pulse` - Pulsing scale effect
+- `shake` - Horizontal shake
+- `wobble` - Rotating wobble
+- `flash` - Opacity flash
+- `bounce` - Vertical bounce
+- `swing` - Pendulum swing
+- `rubberBand` - Elastic stretch
+- `jello` - Jello-like wobble
+
+#### Hover Animations (6)
+- `lift` - Lift up on hover
+- `grow` - Grow on hover
+- `shrink` - Shrink on hover
+- `tilt` - Slight tilt on hover
+- `glow` - Glow effect on hover
+- `float` - Continuous floating
+
+### Using Animation Presets
+
+```tsx
+import { animationPresets, getPreset } from '@tuel/config';
+import { motion } from 'framer-motion';
+
+function AnimatedCard() {
+  const fadeIn = getPreset('fadeIn');
+  const lift = getPreset('lift');
+
+  return (
+    <motion.div
+      initial={fadeIn.variants.initial}
+      animate={fadeIn.variants.animate}
+      exit={fadeIn.variants.exit}
+      whileHover={lift.variants.hover}
+      transition={{
+        duration: fadeIn.duration / 1000,
+        ease: fadeIn.ease,
+      }}
+    >
+      Card Content
+    </motion.div>
+  );
+}
+```
+
+### Getting Presets by Category
+
+```tsx
+import { getPresetsByCategory } from '@tuel/config';
+
+// Get all entrance animations
+const entranceAnimations = getPresetsByCategory('entrance');
+
+// Get all hover effects
+const hoverEffects = getPresetsByCategory('hover');
+```
+
+### Creating Custom Presets
+
+```tsx
+import { createCustomPreset, getPreset } from '@tuel/config';
+
+const customFadeIn = createCustomPreset('fadeIn', {
+  duration: 800,
+  ease: [0.25, 0.46, 0.45, 0.94],
+  variants: {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+  },
+});
+```
+
+### Preset Structure
+
+```tsx
+interface AnimationPreset {
+  name: string;
+  description?: string;
+  duration: number; // in milliseconds
+  ease: string | number[]; // CSS easing or cubic bezier array
+  delay?: number;
+  variants?: Record<string, any>; // Framer Motion variants
+  options?: Record<string, any>;
+}
+```
+
+## Advanced Examples
+
+### Responsive Animation Duration
 
 ```tsx
 import { useTuelConfig } from '@tuel/config';
 
-function MyComponent() {
+function ResponsiveAnimation() {
+  const { config } = useTuelConfig();
+  const isMobile = window.innerWidth < 768;
+
+  return (
+    <motion.div
+      animate={{ x: 100 }}
+      transition={{
+        duration: (config.globalDuration * (isMobile ? 0.7 : 1)) / 1000,
+      }}
+    />
+  );
+}
+```
+
+### Debug Mode
+
+```tsx
+import { useTuelConfig } from '@tuel/config';
+
+function DebugPanel() {
   const { config, updateConfig } = useTuelConfig();
 
   return (
     <div>
-      <p>Current theme: {config.theme}</p>
-      <button onClick={() => updateConfig({ theme: 'dark' })}>
-        Switch to Dark
+      <button onClick={() => updateConfig({ enableDebug: !config.enableDebug })}>
+        Toggle Debug: {config.enableDebug ? 'ON' : 'OFF'}
       </button>
+      
+      {config.enableDebug && (
+        <pre>{JSON.stringify(config, null, 2)}</pre>
+      )}
     </div>
   );
 }
 ```
 
-### Animation Presets
-
-Pre-configured animation styles ready to use.
+### Conditional Animation Based on Config
 
 ```tsx
-import { animationPresets } from '@tuel/config';
+import { useAnimationConfig } from '@tuel/config';
 
-// Available presets
-const fadeIn = animationPresets.fadeIn;
-const slideUp = animationPresets.slideUp;
-const bounce = animationPresets.bounce;
-const scale = animationPresets.scale;
-```
+function ConditionalAnimation() {
+  const { shouldAnimate, duration } = useAnimationConfig();
 
-**Available Presets:**
-
-```typescript
-interface AnimationPresets {
-  fadeIn: AnimationPreset;
-  fadeOut: AnimationPreset;
-  slideUp: AnimationPreset;
-  slideDown: AnimationPreset;
-  slideLeft: AnimationPreset;
-  slideRight: AnimationPreset;
-  scale: AnimationPreset;
-  rotate: AnimationPreset;
-  bounce: AnimationPreset;
-  elastic: AnimationPreset;
-}
-
-interface AnimationPreset {
-  initial: Variant;
-  animate: Variant;
-  exit?: Variant;
-  transition: Transition;
-}
-```
-
-### Theme System
-
-Create and manage themes for consistent styling.
-
-```tsx
-import { createTheme, useTheme } from '@tuel/config';
-
-// Create custom theme
-const myTheme = createTheme({
-  colors: {
-    primary: '#0070f3',
-    secondary: '#7928ca',
-    background: '#ffffff',
-  },
-  animations: {
-    duration: 300,
-    easing: 'easeInOut',
-  },
-});
-
-// Use in component
-function ThemedComponent() {
-  const theme = useTheme();
-  
-  return (
-    <div style={{ backgroundColor: theme.colors.background }}>
-      Themed content
-    </div>
-  );
-}
-```
-
-**Theme Config:**
-
-```typescript
-interface ThemeConfig {
-  colors?: {
-    primary?: string;
-    secondary?: string;
-    background?: string;
-    text?: string;
-  };
-  animations?: {
-    duration?: number;
-    easing?: string;
-  };
-  spacing?: {
-    unit?: number;
-  };
-}
-```
-
-### useThemeAnimation
-
-Hook that combines theme and animation settings.
-
-```tsx
-import { useThemeAnimation } from '@tuel/config';
-import { motion } from 'framer-motion';
-
-function AnimatedCard() {
-  const animation = useThemeAnimation('fadeIn');
-
-  return (
-    <motion.div {...animation}>
-      Card content
-    </motion.div>
-  );
-}
-```
-
-## Usage Examples
-
-### Global Configuration
-
-```tsx
-import { TuelConfigProvider } from '@tuel/config';
-
-function App() {
-  return (
-    <TuelConfigProvider
-      config={{
-        animationDuration: 'normal',
-        reducedMotion: false,
-        theme: 'dark',
-      }}
-    >
-      <Router>
-        <Routes />
-      </Router>
-    </TuelConfigProvider>
-  );
-}
-```
-
-### Using Presets with Framer Motion
-
-```tsx
-import { animationPresets } from '@tuel/config';
-import { motion } from 'framer-motion';
-
-function FadeInCard() {
   return (
     <motion.div
-      initial={animationPresets.fadeIn.initial}
-      animate={animationPresets.fadeIn.animate}
-      transition={animationPresets.fadeIn.transition}
+      animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 1 }}
+      transition={{ duration: duration / 1000 }}
     >
-      <h2>Hello World</h2>
+      {shouldAnimate ? 'Animated!' : 'Static (reduced motion)'}
     </motion.div>
   );
 }
 ```
 
-### Dynamic Theme Switching
+### HOC for Config-Aware Components
 
 ```tsx
-import { useTuelConfig } from '@tuel/config';
+import { withTuelConfig } from '@tuel/config';
 
-function ThemeToggle() {
-  const { config, updateConfig } = useTuelConfig();
-
-  const toggleTheme = () => {
-    const newTheme = config.theme === 'light' ? 'dark' : 'light';
-    updateConfig({ theme: newTheme });
-  };
-
+function MyComponent({ duration, ease, reducedMotion }) {
   return (
-    <button onClick={toggleTheme}>
-      Switch to {config.theme === 'light' ? 'Dark' : 'Light'} Mode
-    </button>
-  );
-}
-```
-
-### Custom Animation Presets
-
-```tsx
-import { TuelConfigProvider, useTuelConfig } from '@tuel/config';
-
-const customPresets = {
-  wiggle: {
-    initial: { rotate: 0 },
-    animate: { 
-      rotate: [0, 10, -10, 10, 0],
-      transition: { duration: 0.5 }
-    },
-  },
-};
-
-function App() {
-  return (
-    <TuelConfigProvider
-      config={{
-        customPresets,
-      }}
+    <motion.div
+      animate={{ scale: reducedMotion ? 1 : 1.2 }}
+      transition={{ duration: duration / 1000, ease }}
     >
-      <WiggleComponent />
-    </TuelConfigProvider>
-  );
-}
-
-function WiggleComponent() {
-  const { config } = useTuelConfig();
-  const wiggle = config.customPresets?.wiggle;
-
-  return (
-    <motion.div {...wiggle}>
-      Wiggle!
+      Content
     </motion.div>
   );
 }
-```
 
-### Responsive Configuration
-
-```tsx
-import { useTuelConfig } from '@tuel/config';
-import { useMediaQuery } from 'react-responsive';
-
-function ResponsiveAnimation() {
-  const { updateConfig } = useTuelConfig();
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-
-  useEffect(() => {
-    updateConfig({
-      animationDuration: isMobile ? 'fast' : 'normal',
-    });
-  }, [isMobile]);
-
-  return <div>Animations adapt to screen size</div>;
-}
-```
-
-### Respecting User Preferences
-
-```tsx
-import { TuelConfigProvider } from '@tuel/config';
-import { useEffect, useState } from 'react';
-
-function App() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mediaQuery.matches);
-
-    const handler = (e) => setReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, []);
-
-  return (
-    <TuelConfigProvider
-      config={{
-        reducedMotion,
-      }}
-    >
-      <YourApp />
-    </TuelConfigProvider>
-  );
-}
+export default withTuelConfig(MyComponent);
 ```
 
 ## TypeScript Support
 
-Full TypeScript support with exported types:
+Full TypeScript support with strict typing:
 
-```typescript
+```tsx
 import type {
   TuelConfig,
-  AnimationPreset,
+  TuelConfigContextValue,
   ThemeConfig,
   ThemeVariant,
+  AnimationPreset,
+  AnimationPresets,
 } from '@tuel/config';
+
+// Type-safe configuration
+const config: Partial<TuelConfig> = {
+  globalDuration: 300,
+  theme: 'dark',
+};
+
+// Type-safe theme
+const theme: ThemeConfig = useTheme('modern', 'light');
+
+// Type-safe preset access
+const preset: AnimationPreset = getPreset('fadeIn');
 ```
+
+## SSR Considerations
+
+The package is SSR-safe and handles server-side rendering gracefully:
+
+- `window` and `localStorage` checks are built-in
+- Media queries are only accessed on client-side
+- Hydration mismatches are avoided
+- All hooks have proper SSR guards
+
+## Performance
+
+- Minimal re-renders with React Context optimization
+- Memoized theme configurations
+- Efficient localStorage usage
+- Optional persistence can be disabled for performance
+- Lazy evaluation of animation presets
 
 ## Best Practices
 
-1. **Wrap your app** with `TuelConfigProvider` at the root level
-2. **Use presets** for consistent animations across components
-3. **Respect user preferences** for reduced motion
-4. **Theme consistently** using the theme system
-5. **Type everything** leverage TypeScript for better DX
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
-- All modern browsers with React 18+ support
-
-## Contributing
-
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for development setup and guidelines.
+1. **Wrap at Root Level**: Place `TuelConfigProvider` as high as possible in your component tree
+2. **Use Presets**: Leverage built-in animation presets for consistency
+3. **Respect Reduced Motion**: Always check `shouldAnimate` for accessibility
+4. **Theme Consistency**: Use theme values instead of hardcoded colors/spacing
+5. **Debug in Development**: Enable debug mode during development for insights
+6. **Persist User Preferences**: Enable `persistConfig` for better UX
 
 ## License
 
@@ -405,6 +528,5 @@ MIT © [Omer Akben](https://github.com/omerakben)
 ## Links
 
 - [Documentation](https://tuel.ai/docs/config)
-- [Examples](https://tuel.ai/examples/config)
 - [GitHub](https://github.com/omerakben/tuel)
-- [npm](https://www.npmjs.com/package/@tuel/config)
+- [Issues](https://github.com/omerakben/tuel/issues)

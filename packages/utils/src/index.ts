@@ -190,22 +190,85 @@ export const range = (
 export * from "./validators";
 
 // Export error handling utilities
-export * from "./errorBoundary";
+export {
+  TuelErrorBoundary,
+  DefaultErrorFallback,
+  useErrorBoundary,
+  withErrorBoundary,
+  AnimationErrorBoundary,
+} from "./errorBoundary";
+
+export type {
+  ErrorBoundaryState,
+  ErrorBoundaryProps,
+  ErrorFallbackProps,
+} from "./errorBoundary";
 
 // Export performance monitoring utilities
-export * from "./performance";
+export {
+  usePerformanceMonitor,
+  PerformanceBudget,
+  performanceBudget,
+  PerformanceDashboard,
+} from "./performance";
+
+export type {
+  PerformanceConfig as PerformanceConfigType,
+  PerformanceMetrics as PerformanceMetricsType,
+  PerformanceAlert,
+  PerformanceReport,
+} from "./performance";
+
+export { useRenderPerformance, useAnimationPerformance } from "./performance";
 
 // Export accessibility utilities
-export * from "./accessibility";
+export {
+  useAccessibilityPreferences,
+  useAccessibleAnimation,
+  useFocusManagement,
+  useScreenReaderAnnouncements,
+  useKeyboardNavigation,
+  generateAriaLabel,
+  checkColorContrast,
+  AccessibilityProvider,
+  useAccessibility,
+  withAccessibility,
+} from "./accessibility";
 
 // Export browser compatibility utilities
-export * from "./browser-compatibility";
+export {
+  BROWSER_REQUIREMENTS,
+  WEBGL_REQUIREMENTS,
+  CSS_REQUIREMENTS,
+  JS_REQUIREMENTS,
+  PERFORMANCE_THRESHOLDS,
+  POLYFILL_CONFIG,
+  BrowserDetector,
+  PolyfillLoader,
+  BrowserPerformanceMonitor,
+  browserDetector,
+  polyfillLoader,
+  performanceMonitor as browserPerformanceMonitor,
+} from "./browser-compatibility";
 
 // Export performance benchmarking utilities
-export * from "./performance-benchmark";
+export {
+  PerformanceMonitor as BenchmarkMonitor,
+  performanceMonitor as benchmarkMonitor,
+} from "./performance-benchmark";
+
+export type {
+  PerformanceConfig as BenchmarkConfig,
+  PerformanceMetrics as BenchmarkMetrics,
+} from "./performance-benchmark";
 
 // Export CI/CD configuration utilities
 export * from "./ci-cd-config";
 
 // Export error reporting and monitoring utilities
-export * from "./error-reporting";
+export {
+  PerformanceMonitor as ErrorReportingMonitor,
+  performanceMonitor as errorReportingMonitor,
+} from "./error-reporting";
+
+export type { PerformanceMonitoringConfig } from "./error-reporting";

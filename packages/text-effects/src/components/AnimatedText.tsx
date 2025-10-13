@@ -2,18 +2,19 @@
 
 import {
   cn,
-  validateDuration,
-  validateStaggerDelay,
-  validateDelay,
-  validateString,
-  validateBoolean,
-  validateAnimationVariant,
-  validateSplitType,
-  TuelErrorBoundary,
-  useAccessibilityPreferences,
-  useAccessibleAnimation,
-  useRenderPerformance,
-  useAnimationPerformance,
+  // Temporarily commented out until module resolution is fixed
+  // validateDuration,
+  // validateStaggerDelay,
+  // validateDelay,
+  // validateString,
+  // validateBoolean,
+  // validateAnimationVariant,
+  // validateSplitType,
+  // TuelErrorBoundary,
+  // useAccessibilityPreferences,
+  // useAccessibleAnimation,
+  // useRenderPerformance,
+  // useAnimationPerformance,
 } from "@tuel/utils";
 import { motion, useInView, Variants } from "framer-motion";
 import gsap from "gsap";
@@ -49,47 +50,46 @@ export function AnimatedText({
   delay = 0,
   as: Component = "div",
 }: AnimatedTextProps) {
-  // Accessibility preferences
-  const accessibilityPrefs = useAccessibilityPreferences();
+  // Temporarily commented out until module resolution is fixed
+  // const accessibilityPrefs = useAccessibilityPreferences();
+  // const { startRender, endRender } = useRenderPerformance("AnimatedText");
+  // const { startAnimation, recordFrame, endAnimation } =
+  //   useAnimationPerformance(variant);
 
-  // Performance monitoring
-  const { startRender, endRender } = useRenderPerformance("AnimatedText");
-  const { startAnimation, recordFrame, endAnimation } =
-    useAnimationPerformance(variant);
-
-  // Validate all inputs with safe defaults
-  const validChildren = validateString(children, "", {
-    maxLength: 10000,
-  }).value;
-  const validVariant = validateAnimationVariant(
-    variant,
-    [
-      "fade",
-      "slide",
-      "typewriter",
-      "scramble",
-      "split",
-      "explode",
-      "wave",
-    ] as const,
-    "fade"
-  ).value;
-  const validSplitType = validateSplitType(splitType, "chars").value;
-  const validStaggerDelay = validateStaggerDelay(staggerDelay, 0.03).value;
-  const validDuration = validateDuration(duration * 1000, 500).value / 1000; // Convert back to seconds
-  const validTriggerOnScroll = validateBoolean(triggerOnScroll, true).value;
-  const validDelay = validateDelay(delay * 1000, 0).value / 1000; // Convert back to seconds;
+  // Simple defaults for now
+  const validChildren = typeof children === "string" ? children : "";
+  const validVariant = [
+    "fade",
+    "slide",
+    "typewriter",
+    "scramble",
+    "split",
+    "explode",
+    "wave",
+  ].includes(variant)
+    ? variant
+    : "fade";
+  const validSplitType = ["chars", "words", "lines"].includes(splitType)
+    ? splitType
+    : "chars";
+  const validStaggerDelay =
+    typeof staggerDelay === "number" ? staggerDelay : 0.03;
+  const validDuration = typeof duration === "number" ? duration : 0.5;
+  const validTriggerOnScroll =
+    typeof triggerOnScroll === "boolean" ? triggerOnScroll : true;
+  const validDelay = typeof delay === "number" ? delay : 0;
 
   // Accessibility-aware animation
-  const { getAnimationConfig } = useAccessibleAnimation(
-    {
-      duration: validDuration,
-      delay: validDelay,
-    },
-    accessibilityPrefs
-  );
+  // const { getAnimationConfig } = useAccessibleAnimation(
+  //   {
+  //     duration: validDuration,
+  //     delay: validDelay,
+  //   },
+  //   accessibilityPrefs
+  // );
 
-  const animationConfig = getAnimationConfig();
+  // Temporarily commented out until module resolution is fixed
+  // const animationConfig = getAnimationConfig();
 
   const textRef = useRef<HTMLElement>(null);
   const splitRef = useRef<gsap.core.Timeline | null>(null);
@@ -108,8 +108,8 @@ export function AnimatedText({
             opacity: 1,
             y: 0,
             transition: {
-              duration: animationConfig.duration,
-              delay: animationConfig.delay,
+              duration: validDuration,
+              delay: validDelay,
               staggerChildren: validStaggerDelay,
             },
           },
@@ -121,7 +121,7 @@ export function AnimatedText({
             opacity: 1,
             transition: {
               duration: 0.05,
-              delay: animationConfig.delay,
+              delay: validDelay,
               staggerChildren: 0.05,
             },
           },
@@ -138,8 +138,8 @@ export function AnimatedText({
             y: 0,
             rotateZ: 0,
             transition: {
-              duration: animationConfig.duration,
-              delay: animationConfig.delay,
+              duration: validDuration,
+              delay: validDelay,
               staggerChildren: validStaggerDelay,
               ease: [0.6, 0.01, -0.05, 0.95],
             },
@@ -151,8 +151,8 @@ export function AnimatedText({
           visible: {
             opacity: 1,
             transition: {
-              duration: animationConfig.duration,
-              delay: animationConfig.delay,
+              duration: validDuration,
+              delay: validDelay,
               staggerChildren: validStaggerDelay,
             },
           },
@@ -178,14 +178,14 @@ export function AnimatedText({
 
       if (validSplitType === "chars") {
         // Create spans safely using DOM methods
-        text.split("").forEach((char) => {
+        text.split("").forEach((char: string) => {
           const span = document.createElement("span");
           span.className = "split-char";
           span.textContent = char === " " ? "\u00A0" : char;
           element.appendChild(span);
         });
       } else if (validSplitType === "words") {
-        text.split(/\s+/).forEach((word) => {
+        text.split(/\s+/).forEach((word: string) => {
           const span = document.createElement("span");
           span.className = "split-word";
           span.textContent = word;
@@ -197,7 +197,7 @@ export function AnimatedText({
         });
       } else if (validSplitType === "lines") {
         // For lines, we'll treat each word as a potential line break
-        text.split(/\s+/).forEach((word) => {
+        text.split(/\s+/).forEach((word: string) => {
           const span = document.createElement("span");
           span.className = "split-line";
           span.textContent = word;
@@ -318,68 +318,72 @@ export function AnimatedText({
     const variants = getVariants();
 
     return (
-      <TuelErrorBoundary
-        animationType={validVariant}
-        onError={(error, errorInfo, errorId) => {
-          console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
+      // Temporarily commented out until module resolution is fixed
+      // <TuelErrorBoundary
+      //   animationType={validVariant}
+      //   onError={(error: Error, errorInfo: any, errorId: string) => {
+      //     console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
+      //   }}
+      // >
+      <motion.div
+        ref={textRef as React.RefObject<HTMLDivElement>}
+        initial="hidden"
+        animate={
+          validTriggerOnScroll ? (isInView ? "visible" : "hidden") : "visible"
+        }
+        variants={variants}
+        className={cn("overflow-hidden", className)}
+        aria-label={`Animated text: ${validChildren}`}
+        role="text"
+        onAnimationStart={() => {
+          // startAnimation();
+          // startRender();
+        }}
+        onAnimationComplete={() => {
+          // endAnimation();
+          // endRender();
         }}
       >
-        <motion.div
-          ref={textRef as React.RefObject<HTMLDivElement>}
-          initial="hidden"
-          animate={
-            validTriggerOnScroll ? (isInView ? "visible" : "hidden") : "visible"
-          }
-          variants={variants}
-          className={cn("overflow-hidden", className)}
-          aria-label={`Animated text: ${validChildren}`}
-          role="text"
-          onAnimationStart={() => {
-            startAnimation();
-            startRender();
-          }}
-          onAnimationComplete={() => {
-            endAnimation();
-            endRender();
-          }}
-        >
-          {validVariant === "typewriter" ? (
-            validChildren.split("").map((char, i) => (
-              <motion.span
-                key={i}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: { opacity: 1 },
-                }}
-                onAnimationStart={() => recordFrame()}
-              >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))
-          ) : (
-            <Component>{validChildren}</Component>
-          )}
-        </motion.div>
-      </TuelErrorBoundary>
+        {validVariant === "typewriter" ? (
+          validChildren.split("").map((char: string, i: number) => (
+            <motion.span
+              key={i}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1 },
+              }}
+              onAnimationStart={() => {
+                /* recordFrame(); */
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          ))
+        ) : (
+          <Component>{validChildren}</Component>
+        )}
+      </motion.div>
+      // </TuelErrorBoundary>
     );
   }
 
   // For GSAP animations
   return (
-    <TuelErrorBoundary
-      animationType={validVariant}
-      onError={(error, errorInfo, errorId) => {
-        console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
-      }}
+    // Temporarily commented out until module resolution is fixed
+    // <TuelErrorBoundary
+    //   animationType={validVariant}
+    //   onError={(error: Error, errorInfo: any, errorId: string) => {
+    //     console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
+    //   }}
+    // >
+    <Component
+      ref={textRef as React.RefObject<HTMLElement>}
+      className={cn("overflow-hidden", className)}
+      aria-label={`Animated text: ${validChildren}`}
+      role="text"
     >
-      <Component
-        ref={textRef as React.RefObject<HTMLElement>}
-        className={cn("overflow-hidden", className)}
-        aria-label={`Animated text: ${validChildren}`}
-        role="text"
-      >
-        {validChildren}
-      </Component>
-    </TuelErrorBoundary>
+      {validChildren}
+    </Component>
+    // </TuelErrorBoundary>
   );
 }

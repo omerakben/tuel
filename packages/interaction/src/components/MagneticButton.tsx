@@ -1,13 +1,14 @@
 import { cn } from "@tuel/utils";
-import {
-  TuelErrorBoundary,
-  useRenderPerformance,
-  useAnimationPerformance,
-  useAccessibilityPreferences,
-  useAccessibleAnimation,
-  useKeyboardNavigation,
-  useScreenReaderAnnouncements,
-} from "@tuel/utils";
+// Temporarily commented out until module resolution is fixed
+// import {
+//   TuelErrorBoundary,
+//   useRenderPerformance,
+//   useAnimationPerformance,
+//   useAccessibilityPreferences,
+//   useAccessibleAnimation,
+//   useKeyboardNavigation,
+//   useScreenReaderAnnouncements,
+// } from "@tuel/utils";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
   MouseEvent,
@@ -78,17 +79,18 @@ export function MagneticButton({
   >([]);
 
   // Performance monitoring
-  const { startRender, endRender } = useRenderPerformance("MagneticButton");
-  const { startAnimation, recordFrame, endAnimation } =
-    useAnimationPerformance("magnetic-button");
+  // Temporarily commented out until module resolution is fixed
+  // const { startRender, endRender } = useRenderPerformance("MagneticButton");
+  // const { startAnimation, recordFrame, endAnimation } =
+  //   useAnimationPerformance("magnetic-button");
 
   // Accessibility
-  const accessibilityPrefs = useAccessibilityPreferences();
-  const { announce } = useScreenReaderAnnouncements();
-  const { getAnimationConfig } = useAccessibleAnimation(
-    { duration: 300, easing: "ease-in-out" },
-    accessibilityPrefs
-  );
+  // const accessibilityPrefs = useAccessibilityPreferences();
+  // const { announce } = useScreenReaderAnnouncements();
+  //   // const { getAnimationConfig } = useAccessibleAnimation(
+  //   { duration: 300, easing: "ease-in-out" },
+  //   accessibilityPrefs
+  // );
 
   // Generate accessible label
   const accessibleLabel =
@@ -115,8 +117,8 @@ export function MagneticButton({
   const handleMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
     if (disabled || !ref.current) return;
 
-    startAnimation();
-    recordFrame();
+    // startAnimation();
+    // recordFrame();
 
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -143,7 +145,7 @@ export function MagneticButton({
       }
     }
 
-    endAnimation();
+    // endAnimation();
   };
 
   // Handle mouse leave
@@ -168,10 +170,10 @@ export function MagneticButton({
   ) => {
     if (disabled) return;
 
-    startRender();
+    // startRender();
 
     // Announce to screen readers
-    announce(`Button activated: ${accessibleLabel}`);
+    // announce(`Button activated: ${accessibleLabel}`);
 
     // Create ripple
     if (ripple && ref.current) {
@@ -197,7 +199,7 @@ export function MagneticButton({
     }
 
     onClick?.();
-    endRender();
+    // endRender();
   };
 
   // Handle keyboard events
@@ -233,69 +235,70 @@ export function MagneticButton({
   }, [x, y, rotateX, rotateY]);
 
   return (
-    <TuelErrorBoundary
-      animationType="magnetic-button"
-      onError={(error, errorInfo, errorId) => {
-        console.warn(`[TUEL] MagneticButton error:`, error);
+    // Temporarily commented out until module resolution is fixed
+    // <TuelErrorBoundary
+    //   animationType="magnetic-button"
+    //   onError={(error: Error, errorInfo: any, errorId: string) => {
+    //     console.warn(`[TUEL] MagneticButton error:`, error);
+    //   }}
+    // >
+    <motion.button
+      ref={ref}
+      className={cn(
+        "relative overflow-hidden cursor-pointer",
+        disabled && "opacity-50 cursor-not-allowed",
+        className
+      )}
+      style={{
+        x: ease === "spring" ? springX : x,
+        y: ease === "spring" ? springY : y,
+        rotateX: tilt ? (ease === "spring" ? springRotateX : rotateX) : 0,
+        rotateY: tilt ? (ease === "spring" ? springRotateY : rotateY) : 0,
+        transformStyle: tilt ? "preserve-3d" : undefined,
       }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      disabled={disabled}
+      whileTap={!disabled ? { scale: 0.95 } : undefined}
+      transition={{ duration: 0.1 }}
+      aria-label={accessibleLabel}
+      aria-describedby={ariaDescribedby}
+      aria-pressed={ariaPressed}
+      aria-expanded={ariaExpanded}
+      aria-disabled={disabled}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      data-testid="magnetic-button"
     >
-      <motion.button
-        ref={ref}
-        className={cn(
-          "relative overflow-hidden cursor-pointer",
-          disabled && "opacity-50 cursor-not-allowed",
-          className
-        )}
-        style={{
-          x: ease === "spring" ? springX : x,
-          y: ease === "spring" ? springY : y,
-          rotateX: tilt ? (ease === "spring" ? springRotateX : rotateX) : 0,
-          rotateY: tilt ? (ease === "spring" ? springRotateY : rotateY) : 0,
-          transformStyle: tilt ? "preserve-3d" : undefined,
-        }}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        whileTap={!disabled ? { scale: 0.95 } : undefined}
-        transition={{ duration: 0.1 }}
-        aria-label={accessibleLabel}
-        aria-describedby={ariaDescribedby}
-        aria-pressed={ariaPressed}
-        aria-expanded={ariaExpanded}
-        aria-disabled={disabled}
-        role="button"
-        tabIndex={disabled ? -1 : 0}
-        data-testid="magnetic-button"
-      >
-        {children}
+      {children}
 
-        {/* Ripple effects */}
-        {ripple &&
-          ripples.map((ripple) => (
-            <motion.span
-              key={ripple.id}
-              className="absolute rounded-full bg-white/30 pointer-events-none"
-              style={{
-                left: ripple.x,
-                top: ripple.y,
-                width: 0,
-                height: 0,
-              }}
-              initial={{ width: 0, height: 0, opacity: 1 }}
-              animate={{
-                width: 400,
-                height: 400,
-                opacity: 0,
-                x: -200,
-                y: -200,
-              }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
-          ))}
-      </motion.button>
-    </TuelErrorBoundary>
+      {/* Ripple effects */}
+      {ripple &&
+        ripples.map((ripple) => (
+          <motion.span
+            key={ripple.id}
+            className="absolute rounded-full bg-white/30 pointer-events-none"
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              width: 0,
+              height: 0,
+            }}
+            initial={{ width: 0, height: 0, opacity: 1 }}
+            animate={{
+              width: 400,
+              height: 400,
+              opacity: 0,
+              x: -200,
+              y: -200,
+            }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          />
+        ))}
+    </motion.button>
+    // </TuelErrorBoundary>
   );
 }

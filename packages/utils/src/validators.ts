@@ -310,7 +310,7 @@ export function validateProps<T extends Record<string, unknown>>(
   for (const [key, validator] of Object.entries(validators)) {
     if (validator && key in validatedProps) {
       const result = validator(validatedProps[key]);
-      validatedProps[key as keyof T] = result.value;
+      validatedProps[key as keyof T] = result.value as T[keyof T];
     }
   }
 

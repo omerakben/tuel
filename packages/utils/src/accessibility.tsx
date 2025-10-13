@@ -3,7 +3,7 @@
  * Provides WCAG 2.1 AA compliance, keyboard navigation, and screen reader support
  */
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 export interface AccessibilityConfig {
   enableReducedMotion: boolean;
@@ -47,7 +47,7 @@ export function useAccessibilityPreferences(): {
   const [preferences, setPreferences] = useState({
     prefersReducedMotion: false,
     prefersHighContrast: false,
-    prefersColorScheme: "no-preference" as const,
+    prefersColorScheme: "no-preference" as "light" | "dark" | "no-preference",
     screenReaderActive: false,
   });
 
@@ -489,7 +489,7 @@ export function useAccessibility(): AccessibilityContextValue {
 /**
  * Higher-order component for accessibility
  */
-export function withAccessibility<P extends object>(
+export function withAccessibility<P extends Record<string, unknown>>(
   Component: React.ComponentType<P>,
   accessibilityProps?: Partial<AccessibilityConfig>
 ) {
@@ -503,7 +503,7 @@ export function withAccessibility<P extends object>(
       "aria-label":
         (props as any)["aria-label"] ||
         generateAriaLabel(Component.name || "Component", props),
-    };
+    } as P;
 
     return <Component {...mergedProps} />;
   };

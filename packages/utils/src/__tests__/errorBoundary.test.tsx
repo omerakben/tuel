@@ -7,7 +7,7 @@ import {
   AnimationErrorBoundary,
   useErrorBoundary,
   withErrorBoundary,
-} from "../src/errorBoundary";
+} from "../errorBoundary";
 
 // Mock console methods
 const consoleSpy = {

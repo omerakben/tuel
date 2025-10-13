@@ -1,10 +1,11 @@
 import { cn } from "@tuel/utils";
-import {
-  useReducedMotion,
-  useRenderPerformance,
-  useAnimationPerformance,
-} from "@tuel/performance";
-import { TuelErrorBoundary } from "@tuel/utils";
+// Temporarily commented out until module resolution is fixed
+// import {
+//   useReducedMotion,
+//   useRenderPerformance,
+//   useAnimationPerformance,
+// } from "@tuel/performance";
+// import { TuelErrorBoundary } from "@tuel/utils";
 import { ReactNode, useEffect, useRef } from "react";
 import { canUseDOM } from "../hooks/useSSR";
 
@@ -55,20 +56,21 @@ export function HorizontalScroll({
 }: HorizontalScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  // Temporarily commented out until module resolution is fixed
+  // const prefersReducedMotion = useReducedMotion();
 
   // Performance monitoring
-  const { startRender, endRender } = useRenderPerformance("HorizontalScroll");
-  const { startAnimation, recordFrame, endAnimation } =
-    useAnimationPerformance("horizontal-scroll");
+  // const { startRender, endRender } = useRenderPerformance("HorizontalScroll");
+  // const { startAnimation, recordFrame, endAnimation } =
+  //   useAnimationPerformance("horizontal-scroll");
 
   useEffect(() => {
     // Skip animations if SSR or user prefers reduced motion
-    if (!canUseDOM() || prefersReducedMotion || !gsap || !ScrollTrigger) {
+    if (!canUseDOM() || /* prefersReducedMotion || */ !gsap || !ScrollTrigger) {
       return;
     }
 
-    startAnimation();
+    // startAnimation();
 
     const container = containerRef.current;
     const scrollElement = scrollRef.current;
@@ -97,13 +99,13 @@ export function HorizontalScroll({
         invalidateOnRefresh: true,
         anticipatePin: 1,
         onUpdate: (self: any) => {
-          recordFrame();
+          // recordFrame();
           if (onUpdate) {
             onUpdate(self.progress);
           }
         },
         onComplete: () => {
-          endAnimation();
+          // endAnimation();
           if (onComplete) {
             onComplete();
           }
@@ -113,7 +115,7 @@ export function HorizontalScroll({
 
     return () => {
       animation.kill();
-      endAnimation();
+      // endAnimation();
     };
   }, [
     speed,
@@ -126,28 +128,30 @@ export function HorizontalScroll({
     end,
     onUpdate,
     onComplete,
-    prefersReducedMotion,
-    startAnimation,
-    recordFrame,
-    endAnimation,
+    // Temporarily commented out until module resolution is fixed
+    // prefersReducedMotion,
+    // startAnimation,
+    // recordFrame,
+    // endAnimation,
   ]);
 
   return (
-    <TuelErrorBoundary
-      animationType="horizontal-scroll"
-      onError={(error, errorInfo, errorId) => {
-        console.warn(`[TUEL] HorizontalScroll error:`, error);
-      }}
+    // Temporarily commented out until module resolution is fixed
+    // <TuelErrorBoundary
+    //   animationType="horizontal-scroll"
+    //   onError={(error, errorInfo, errorId) => {
+    //     console.warn(`[TUEL] HorizontalScroll error:`, error);
+    //   }}
+    // >
+    <div
+      ref={containerRef}
+      className={cn("overflow-hidden", containerClassName)}
     >
-      <div
-        ref={containerRef}
-        className={cn("overflow-hidden", containerClassName)}
-      >
-        <div ref={scrollRef} className={cn("flex w-fit", className)}>
-          {children}
-        </div>
+      <div ref={scrollRef} className={cn("flex w-fit", className)}>
+        {children}
       </div>
-    </TuelErrorBoundary>
+    </div>
+    // </TuelErrorBoundary>
   );
 }
 

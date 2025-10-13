@@ -284,10 +284,24 @@ export const defaultCIConfig: CIConfig = {
         security: { enabled: true, failOnHigh: false, failOnMedium: false },
       },
       testing: {
-        unit: { coverage: { threshold: 70 } },
-        performance: {
-          thresholds: { fps: 20, memory: 150, loadTime: 5000, renderTime: 50 },
+        unit: {
+          enabled: true,
+          coverage: {
+            enabled: true,
+            threshold: 70,
+            failOnThreshold: true,
+          },
         },
+        performance: {
+          enabled: true,
+          thresholds: { fps: 20, memory: 150, loadTime: 5000, renderTime: 50 },
+          failOnThreshold: true,
+        },
+      },
+      deployment: {
+        npm: { enabled: false, packages: [], prerelease: true },
+        documentation: { enabled: false, autoDeploy: false },
+        preview: { enabled: false, autoDeploy: false },
       },
     },
     staging: {
@@ -304,10 +318,24 @@ export const defaultCIConfig: CIConfig = {
         security: { enabled: true, failOnHigh: true, failOnMedium: false },
       },
       testing: {
-        unit: { coverage: { threshold: 80 } },
-        performance: {
-          thresholds: { fps: 30, memory: 120, loadTime: 4000, renderTime: 33 },
+        unit: {
+          enabled: true,
+          coverage: {
+            enabled: true,
+            threshold: 80,
+            failOnThreshold: true,
+          },
         },
+        performance: {
+          enabled: true,
+          thresholds: { fps: 30, memory: 120, loadTime: 4000, renderTime: 33 },
+          failOnThreshold: true,
+        },
+      },
+      deployment: {
+        npm: { enabled: false, packages: [], prerelease: true },
+        documentation: { enabled: true, autoDeploy: true },
+        preview: { enabled: true, autoDeploy: true },
       },
     },
     production: {
@@ -330,10 +358,24 @@ export const defaultCIConfig: CIConfig = {
         security: { enabled: true, failOnHigh: true, failOnMedium: true },
       },
       testing: {
-        unit: { coverage: { threshold: 90 } },
-        performance: {
-          thresholds: { fps: 45, memory: 100, loadTime: 3000, renderTime: 22 },
+        unit: {
+          enabled: true,
+          coverage: {
+            enabled: true,
+            threshold: 90,
+            failOnThreshold: true,
+          },
         },
+        performance: {
+          enabled: true,
+          thresholds: { fps: 45, memory: 100, loadTime: 3000, renderTime: 22 },
+          failOnThreshold: true,
+        },
+      },
+      deployment: {
+        npm: { enabled: true, packages: ["@tuel/*"], prerelease: false },
+        documentation: { enabled: true, autoDeploy: true },
+        preview: { enabled: false, autoDeploy: false },
       },
     },
   },

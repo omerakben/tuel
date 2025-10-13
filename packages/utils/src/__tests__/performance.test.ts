@@ -6,7 +6,7 @@ import {
   useAnimationPerformance,
   PerformanceBudget,
   performanceBudget,
-} from "../src/performance";
+} from "../performance";
 
 // Mock performance API
 const mockPerformance = {

@@ -227,8 +227,8 @@ export class ErrorReporter {
         tags: {
           type: "javascript",
           filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
+          lineno: event.lineno?.toString() || "unknown",
+          colno: event.colno?.toString() || "unknown",
         },
         extra: {
           message: event.message,
@@ -401,7 +401,7 @@ export class ErrorReporter {
 
   private parseStackTrace(
     stack?: string
-  ): ErrorEvent["exception"]["stacktrace"]["frames"] {
+  ): NonNullable<ErrorEvent["exception"]>["stacktrace"]["frames"] {
     if (!stack) return [];
 
     return stack.split("\n").map((line, index) => {

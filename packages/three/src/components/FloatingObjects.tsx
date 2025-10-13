@@ -5,7 +5,7 @@ import {
   MeshDistortMaterial,
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { cn } from "@tuel/utils";
+import { cn, TuelErrorBoundary } from "@tuel/utils";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
@@ -148,38 +148,45 @@ export function FloatingObjects({
   floatSpeed = 2,
 }: FloatingObjectsProps) {
   return (
-    <div className={cn("w-full h-full", className)}>
-      <Canvas
-        shadows={shadows}
-        camera={{ position: cameraPosition, fov: 75 }}
-        style={{ background: backgroundColor }}
-      >
-        {fog && <fog attach="fog" args={[fogColor, fogNear, fogFar]} />}
+    <TuelErrorBoundary
+      animationType="floating-objects"
+      onError={(error, errorInfo, errorId) => {
+        console.warn(`[TUEL] FloatingObjects error:`, error);
+      }}
+    >
+      <div className={cn("w-full h-full", className)}>
+        <Canvas
+          shadows={shadows}
+          camera={{ position: cameraPosition, fov: 75 }}
+          style={{ background: backgroundColor }}
+        >
+          {fog && <fog attach="fog" args={[fogColor, fogNear, fogFar]} />}
 
-        <ambientLight intensity={ambientIntensity} />
-        <pointLight position={[10, 10, 10]} intensity={1} castShadow />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} />
+          <ambientLight intensity={ambientIntensity} />
+          <pointLight position={[10, 10, 10]} intensity={1} castShadow />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
-        {environment && <Environment preset={environment} />}
+          {environment && <Environment preset={environment} />}
 
-        {objects.map((obj, index) => (
-          <FloatingObject
-            key={index}
-            {...obj}
-            speed={obj.speed || floatSpeed}
-          />
-        ))}
+          {objects.map((obj, index) => (
+            <FloatingObject
+              key={index}
+              {...obj}
+              speed={obj.speed || floatSpeed}
+            />
+          ))}
 
-        {shadows && (
-          <ContactShadows
-            position={[0, -2, 0]}
-            opacity={0.4}
-            scale={10}
-            blur={2}
-            far={4}
-          />
-        )}
-      </Canvas>
-    </div>
+          {shadows && (
+            <ContactShadows
+              position={[0, -2, 0]}
+              opacity={0.4}
+              scale={10}
+              blur={2}
+              far={4}
+            />
+          )}
+        </Canvas>
+      </div>
+    </TuelErrorBoundary>
   );
 }

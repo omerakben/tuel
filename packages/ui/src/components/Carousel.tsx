@@ -1,4 +1,12 @@
 import { cn } from "@tuel/utils";
+import {
+  TuelErrorBoundary,
+  useRenderPerformance,
+  useAnimationPerformance,
+  useAccessibilityPreferences,
+  useAccessibleAnimation,
+  useScreenReaderAnnouncements,
+} from "@tuel/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
@@ -22,6 +30,8 @@ export interface CarouselProps {
   draggable?: boolean;
   direction?: "horizontal" | "vertical";
   onSlideChange?: (index: number) => void;
+  "aria-label"?: string;
+  "aria-describedby"?: string;
 }
 
 export function Carousel({
@@ -36,6 +46,8 @@ export function Carousel({
   draggable = true,
   direction = "horizontal",
   onSlideChange,
+  "aria-label": ariaLabel,
+  "aria-describedby": ariaDescribedby,
 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -44,9 +56,30 @@ export function Carousel({
     undefined
   );
 
+  // Performance monitoring
+  const { startRender, endRender } = useRenderPerformance("Carousel");
+  const { startAnimation, recordFrame, endAnimation } = useAnimationPerformance(
+    `carousel-${variant}`
+  );
+
+  // Accessibility
+  const accessibilityPrefs = useAccessibilityPreferences();
+  const { announce } = useScreenReaderAnnouncements();
+  const { getAnimationConfig } = useAccessibleAnimation(
+    { duration: 500, easing: "ease-in-out" },
+    accessibilityPrefs
+  );
+
+  // Generate accessible label
+  const accessibleLabel =
+    ariaLabel || `Image carousel with ${slides.length} slides`;
+
   // Handle slide change
   const goToSlide = useCallback(
     (index: number) => {
+      startAnimation();
+      recordFrame();
+
       let newIndex = index;
 
       if (loop) {
@@ -58,8 +91,24 @@ export function Carousel({
 
       setCurrentIndex(newIndex);
       onSlideChange?.(newIndex);
+
+      // Announce slide change to screen readers
+      const currentSlide = slides[newIndex];
+      const slideTitle = currentSlide?.title || `Slide ${newIndex + 1}`;
+      announce(`Now showing: ${slideTitle}`);
+
+      endAnimation();
     },
-    [loop, slides.length, onSlideChange]
+    [
+      loop,
+      slides.length,
+      onSlideChange,
+      startAnimation,
+      recordFrame,
+      endAnimation,
+      announce,
+      slides,
+    ]
   );
 
   // Auto play
@@ -144,6 +193,8 @@ export function Carousel({
     _: any,
     info: { offset: { x: number; y: number } }
   ) => {
+    startRender();
+
     const threshold = 50;
     const isHorizontal = direction === "horizontal";
     const offset = isHorizontal ? info.offset.x : info.offset.y;
@@ -156,119 +207,179 @@ export function Carousel({
       }
     }
     setIsDragging(false);
+
+    endRender();
   };
 
   const variants = getVariants();
 
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case "ArrowLeft":
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+        break;
+      case "ArrowRight":
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+        break;
+      case "Home":
+        e.preventDefault();
+        goToSlide(0);
+        break;
+      case "End":
+        e.preventDefault();
+        goToSlide(slides.length - 1);
+        break;
+      case "Escape":
+        if (isDragging) {
+          setIsDragging(false);
+        }
+        break;
+    }
+  };
+
   return (
-    <div
-      ref={containerRef}
-      className={cn("relative w-full h-full overflow-hidden", className)}
+    <TuelErrorBoundary
+      animationType="carousel"
+      onError={(error, errorInfo, errorId) => {
+        console.warn(`[TUEL] Carousel error:`, error);
+      }}
     >
-      {/* Slides Container */}
-      <div className="relative w-full h-full">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={currentIndex}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full"
-            drag={draggable ? (direction === "horizontal" ? "x" : "y") : false}
-            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-            dragElastic={0.2}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={handleDragEnd}
-          >
-            {slides[currentIndex]?.image && (
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${slides[currentIndex].image})`,
-                }}
-              />
-            )}
-            <div className="relative z-10 w-full h-full flex items-center justify-center p-8">
-              {slides[currentIndex]?.title && (
-                <h2 className="text-4xl font-bold mb-4 text-center">
-                  {slides[currentIndex].title}
-                </h2>
-              )}
-              {slides[currentIndex]?.description && (
-                <p className="text-lg text-center mb-6">
-                  {slides[currentIndex].description}
-                </p>
-              )}
-              {slides[currentIndex]?.content}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Navigation Arrows */}
-      {showArrows && (
-        <>
-          <button
-            onClick={() => goToSlide(currentIndex - 1)}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label="Previous slide"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div
+        ref={containerRef}
+        className={cn("relative w-full h-full overflow-hidden", className)}
+        aria-label={accessibleLabel}
+        aria-describedby={ariaDescribedby}
+        role="region"
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        data-testid="carousel"
+      >
+        {/* Slides Container */}
+        <div className="relative w-full h-full">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={currentIndex}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full"
+              drag={
+                draggable ? (direction === "horizontal" ? "x" : "y") : false
+              }
+              dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              dragElastic={0.2}
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={handleDragEnd}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() => goToSlide(currentIndex + 1)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label="Next slide"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Indicators */}
-      {showIndicators && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={cn(
-                "w-3 h-3 rounded-full transition-all",
-                index === currentIndex
-                  ? "bg-white"
-                  : "bg-white bg-opacity-50 hover:bg-opacity-75"
+              {slides[currentIndex]?.image && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${slides[currentIndex].image})`,
+                  }}
+                />
               )}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+              <div className="relative z-10 w-full h-full flex items-center justify-center p-8">
+                {slides[currentIndex]?.title && (
+                  <h2 className="text-4xl font-bold mb-4 text-center">
+                    {slides[currentIndex].title}
+                  </h2>
+                )}
+                {slides[currentIndex]?.description && (
+                  <p className="text-lg text-center mb-6">
+                    {slides[currentIndex].description}
+                  </p>
+                )}
+                {slides[currentIndex]?.content}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
-      )}
-    </div>
+
+        {/* Navigation Arrows */}
+        {showArrows && (
+          <>
+            <button
+              onClick={() => goToSlide(currentIndex - 1)}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              aria-label="Previous slide"
+              aria-describedby="carousel-navigation"
+              tabIndex={0}
+              data-testid="carousel-prev-button"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              onClick={() => goToSlide(currentIndex + 1)}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              aria-label="Next slide"
+              aria-describedby="carousel-navigation"
+              tabIndex={0}
+              data-testid="carousel-next-button"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </>
+        )}
+
+        {/* Indicators */}
+        {showIndicators && (
+          <div
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
+            role="tablist"
+            aria-label="Slide indicators"
+          >
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={cn(
+                  "w-3 h-3 rounded-full transition-all",
+                  index === currentIndex
+                    ? "bg-white"
+                    : "bg-white bg-opacity-50 hover:bg-opacity-75"
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-selected={index === currentIndex ? "true" : "false"}
+                role="tab"
+                tabIndex={index === currentIndex ? 0 : -1}
+                data-testid={`carousel-indicator-${index}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </TuelErrorBoundary>
   );
 }

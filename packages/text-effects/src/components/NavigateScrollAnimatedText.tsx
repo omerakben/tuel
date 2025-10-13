@@ -51,7 +51,9 @@ export function NavigateScrollAnimatedText({
     paragraphElements.forEach((paragraph) => {
       const text = paragraph.textContent || "";
       const words = text.split(/\s+/);
-      paragraph.innerHTML = "";
+
+      // Clear existing content safely
+      paragraph.textContent = "";
 
       words.forEach((word) => {
         if (word.trim()) {

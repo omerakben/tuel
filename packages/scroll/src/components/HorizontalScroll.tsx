@@ -1,5 +1,10 @@
 import { cn } from "@tuel/utils";
-import { useReducedMotion } from "@tuel/performance";
+import {
+  useReducedMotion,
+  useRenderPerformance,
+  useAnimationPerformance,
+} from "@tuel/performance";
+import { TuelErrorBoundary } from "@tuel/utils";
 import { ReactNode, useEffect, useRef } from "react";
 import { canUseDOM } from "../hooks/useSSR";
 
@@ -52,11 +57,18 @@ export function HorizontalScroll({
   const scrollRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Performance monitoring
+  const { startRender, endRender } = useRenderPerformance("HorizontalScroll");
+  const { startAnimation, recordFrame, endAnimation } =
+    useAnimationPerformance("horizontal-scroll");
+
   useEffect(() => {
     // Skip animations if SSR or user prefers reduced motion
     if (!canUseDOM() || prefersReducedMotion || !gsap || !ScrollTrigger) {
       return;
     }
+
+    startAnimation();
 
     const container = containerRef.current;
     const scrollElement = scrollRef.current;
@@ -85,8 +97,15 @@ export function HorizontalScroll({
         invalidateOnRefresh: true,
         anticipatePin: 1,
         onUpdate: (self: any) => {
+          recordFrame();
           if (onUpdate) {
             onUpdate(self.progress);
+          }
+        },
+        onComplete: () => {
+          endAnimation();
+          if (onComplete) {
+            onComplete();
           }
         },
       },
@@ -94,6 +113,7 @@ export function HorizontalScroll({
 
     return () => {
       animation.kill();
+      endAnimation();
     };
   }, [
     speed,
@@ -107,17 +127,27 @@ export function HorizontalScroll({
     onUpdate,
     onComplete,
     prefersReducedMotion,
+    startAnimation,
+    recordFrame,
+    endAnimation,
   ]);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn("overflow-hidden", containerClassName)}
+    <TuelErrorBoundary
+      animationType="horizontal-scroll"
+      onError={(error, errorInfo, errorId) => {
+        console.warn(`[TUEL] HorizontalScroll error:`, error);
+      }}
     >
-      <div ref={scrollRef} className={cn("flex w-fit", className)}>
-        {children}
+      <div
+        ref={containerRef}
+        className={cn("overflow-hidden", containerClassName)}
+      >
+        <div ref={scrollRef} className={cn("flex w-fit", className)}>
+          {children}
+        </div>
       </div>
-    </div>
+    </TuelErrorBoundary>
   );
 }
 

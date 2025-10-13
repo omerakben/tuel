@@ -205,12 +205,18 @@ export function SofiHealthScroll({
       linesClass: "line",
     });
 
-    header1Split.chars.forEach(
-      (char) => (char.innerHTML = `<span>${char.innerHTML}</span>`)
-    );
-    [...titleSplits.lines, ...descriptionSplits.lines].forEach(
-      (line) => (line.innerHTML = `<span>${line.innerHTML}</span>`)
-    );
+    header1Split.chars.forEach((char) => {
+      const span = document.createElement("span");
+      span.textContent = char.textContent || "";
+      char.textContent = "";
+      char.appendChild(span);
+    });
+    [...titleSplits.lines, ...descriptionSplits.lines].forEach((line) => {
+      const span = document.createElement("span");
+      span.textContent = line.textContent || "";
+      line.textContent = "";
+      line.appendChild(span);
+    });
 
     const animOptions = {
       duration: animationDuration,
@@ -331,10 +337,41 @@ export function SofiHealthScroll({
     return () => {
       window.removeEventListener("resize", handleResize);
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Cleanup Three.js resources comprehensively
       if (modelContainerRef.current && renderer.domElement) {
         modelContainerRef.current.removeChild(renderer.domElement);
       }
+
+      // Cleanup scene and all objects
+      if (sceneRef.current) {
+        sceneRef.current.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((material) => material.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          }
+        });
+        sceneRef.current.clear();
+      }
+
+      // Cleanup renderer
       renderer.dispose();
+
+      // Cleanup model reference
+      if (modelRef.current) {
+        modelRef.current = null;
+      }
+
+      // Cleanup size reference
+      if (modelSizeRef.current) {
+        modelSizeRef.current = null;
+      }
     };
   }, [
     modelUrl,

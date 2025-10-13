@@ -1,6 +1,20 @@
 "use client";
 
-import { cn } from "@tuel/utils";
+import {
+  cn,
+  validateDuration,
+  validateStaggerDelay,
+  validateDelay,
+  validateString,
+  validateBoolean,
+  validateAnimationVariant,
+  validateSplitType,
+  TuelErrorBoundary,
+  useAccessibilityPreferences,
+  useAccessibleAnimation,
+  useRenderPerformance,
+  useAnimationPerformance,
+} from "@tuel/utils";
 import { motion, useInView, Variants } from "framer-motion";
 import gsap from "gsap";
 import { ElementType, useEffect, useRef } from "react";
@@ -35,13 +49,55 @@ export function AnimatedText({
   delay = 0,
   as: Component = "div",
 }: AnimatedTextProps) {
+  // Accessibility preferences
+  const accessibilityPrefs = useAccessibilityPreferences();
+
+  // Performance monitoring
+  const { startRender, endRender } = useRenderPerformance("AnimatedText");
+  const { startAnimation, recordFrame, endAnimation } =
+    useAnimationPerformance(variant);
+
+  // Validate all inputs with safe defaults
+  const validChildren = validateString(children, "", {
+    maxLength: 10000,
+  }).value;
+  const validVariant = validateAnimationVariant(
+    variant,
+    [
+      "fade",
+      "slide",
+      "typewriter",
+      "scramble",
+      "split",
+      "explode",
+      "wave",
+    ] as const,
+    "fade"
+  ).value;
+  const validSplitType = validateSplitType(splitType, "chars").value;
+  const validStaggerDelay = validateStaggerDelay(staggerDelay, 0.03).value;
+  const validDuration = validateDuration(duration * 1000, 500).value / 1000; // Convert back to seconds
+  const validTriggerOnScroll = validateBoolean(triggerOnScroll, true).value;
+  const validDelay = validateDelay(delay * 1000, 0).value / 1000; // Convert back to seconds;
+
+  // Accessibility-aware animation
+  const { getAnimationConfig } = useAccessibleAnimation(
+    {
+      duration: validDuration,
+      delay: validDelay,
+    },
+    accessibilityPrefs
+  );
+
+  const animationConfig = getAnimationConfig();
+
   const textRef = useRef<HTMLElement>(null);
-  const splitRef = useRef<any>(null);
+  const splitRef = useRef<gsap.core.Timeline | null>(null);
   const isInView = useInView(textRef, { once: true, amount: 0.5 });
 
   // Framer Motion variants
   const getVariants = (): Variants => {
-    switch (variant) {
+    switch (validVariant) {
       case "slide":
         return {
           hidden: {
@@ -52,9 +108,9 @@ export function AnimatedText({
             opacity: 1,
             y: 0,
             transition: {
-              duration,
-              delay,
-              staggerChildren: staggerDelay,
+              duration: animationConfig.duration,
+              delay: animationConfig.delay,
+              staggerChildren: validStaggerDelay,
             },
           },
         };
@@ -65,7 +121,7 @@ export function AnimatedText({
             opacity: 1,
             transition: {
               duration: 0.05,
-              delay,
+              delay: animationConfig.delay,
               staggerChildren: 0.05,
             },
           },
@@ -82,9 +138,9 @@ export function AnimatedText({
             y: 0,
             rotateZ: 0,
             transition: {
-              duration,
-              delay,
-              staggerChildren: staggerDelay,
+              duration: animationConfig.duration,
+              delay: animationConfig.delay,
+              staggerChildren: validStaggerDelay,
               ease: [0.6, 0.01, -0.05, 0.95],
             },
           },
@@ -95,9 +151,9 @@ export function AnimatedText({
           visible: {
             opacity: 1,
             transition: {
-              duration,
-              delay,
-              staggerChildren: staggerDelay,
+              duration: animationConfig.duration,
+              delay: animationConfig.delay,
+              staggerChildren: validStaggerDelay,
             },
           },
         };
@@ -109,48 +165,61 @@ export function AnimatedText({
     if (typeof window === "undefined" || !textRef.current) return;
 
     if (
-      variant === "split" ||
-      variant === "explode" ||
-      variant === "scramble"
+      validVariant === "split" ||
+      validVariant === "explode" ||
+      validVariant === "scramble"
     ) {
-      // Create manual split for GSAP animations
-      const text = children;
+      // Create manual split for GSAP animations using React-safe methods
+      const text = validChildren;
       const element = textRef.current;
 
-      if (splitType === "chars") {
-        element.innerHTML = text
-          .split("")
-          .map(
-            (char) =>
-              `<span class="split-char">${
-                char === " " ? "&nbsp;" : char
-              }</span>`
-          )
-          .join("");
-      } else if (splitType === "words") {
-        element.innerHTML = text
-          .split(/\s+/)
-          .map((word) => `<span class="split-word">${word}</span>`)
-          .join(" ");
-      } else if (splitType === "lines") {
+      // Clear existing content safely
+      element.textContent = "";
+
+      if (validSplitType === "chars") {
+        // Create spans safely using DOM methods
+        text.split("").forEach((char) => {
+          const span = document.createElement("span");
+          span.className = "split-char";
+          span.textContent = char === " " ? "\u00A0" : char;
+          element.appendChild(span);
+        });
+      } else if (validSplitType === "words") {
+        text.split(/\s+/).forEach((word) => {
+          const span = document.createElement("span");
+          span.className = "split-word";
+          span.textContent = word;
+          element.appendChild(span);
+          // Add space between words
+          if (word !== text.split(/\s+/).slice(-1)[0]) {
+            element.appendChild(document.createTextNode(" "));
+          }
+        });
+      } else if (validSplitType === "lines") {
         // For lines, we'll treat each word as a potential line break
-        element.innerHTML = text
-          .split(/\s+/)
-          .map((word) => `<span class="split-line">${word}</span>`)
-          .join(" ");
+        text.split(/\s+/).forEach((word) => {
+          const span = document.createElement("span");
+          span.className = "split-line";
+          span.textContent = word;
+          element.appendChild(span);
+          // Add space between words
+          if (word !== text.split(/\s+/).slice(-1)[0]) {
+            element.appendChild(document.createTextNode(" "));
+          }
+        });
       }
 
-      const elements = element.querySelectorAll(`.split-${splitType}`);
+      const elements = element.querySelectorAll(`.split-${validSplitType}`);
 
-      if (variant === "split") {
+      if (validVariant === "split") {
         gsap.set(elements, { opacity: 0, y: 50, rotateX: -90 });
 
         const tl = gsap.timeline({
-          delay,
+          delay: validDelay,
           onComplete: () => {
-            // Restore original text after animation
+            // Restore original text safely after animation
             if (textRef.current) {
-              textRef.current.innerHTML = children;
+              textRef.current.textContent = validChildren;
             }
           },
         });
@@ -159,23 +228,23 @@ export function AnimatedText({
           opacity: 1,
           y: 0,
           rotateX: 0,
-          duration,
-          stagger: staggerDelay,
+          duration: validDuration,
+          stagger: validStaggerDelay,
           ease: "back.out(1.7)",
         });
 
-        if (triggerOnScroll && !isInView) {
+        if (validTriggerOnScroll && !isInView) {
           tl.pause();
         }
-      } else if (variant === "explode") {
+      } else if (validVariant === "explode") {
         gsap.set(elements, { opacity: 0, scale: 0 });
 
-        const tl = gsap.timeline({ delay });
+        const tl = gsap.timeline({ delay: validDelay });
 
         tl.to(elements, {
           opacity: 1,
           scale: 1,
-          duration,
+          duration: validDuration,
           stagger: {
             amount: 0.5,
             from: "center",
@@ -184,10 +253,10 @@ export function AnimatedText({
           ease: "elastic.out(1, 0.5)",
         });
 
-        if (triggerOnScroll && !isInView) {
+        if (validTriggerOnScroll && !isInView) {
           tl.pause();
         }
-      } else if (variant === "scramble") {
+      } else if (validVariant === "scramble") {
         const chars =
           "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
 
@@ -212,78 +281,105 @@ export function AnimatedText({
     }
 
     return () => {
-      // Cleanup
+      // Cleanup safely
       if (textRef.current) {
-        textRef.current.innerHTML = children;
+        textRef.current.textContent = validChildren;
       }
     };
   }, [
-    variant,
-    splitType,
-    duration,
-    staggerDelay,
-    delay,
+    validVariant,
+    validSplitType,
+    validDuration,
+    validStaggerDelay,
+    validDelay,
     isInView,
-    triggerOnScroll,
-    children,
+    validTriggerOnScroll,
+    validChildren,
   ]);
 
   // Trigger animation on scroll
   useEffect(() => {
-    if (triggerOnScroll && isInView && splitRef.current) {
+    if (validTriggerOnScroll && isInView && splitRef.current) {
       const tl = gsap.timeline();
 
-      if (variant === "split" || variant === "explode") {
+      if (validVariant === "split" || validVariant === "explode") {
         tl.play();
       }
     }
-  }, [isInView, triggerOnScroll, variant]);
+  }, [isInView, validTriggerOnScroll, validVariant]);
 
   // For Framer Motion variants
   if (
-    variant === "fade" ||
-    variant === "slide" ||
-    variant === "typewriter" ||
-    variant === "wave"
+    validVariant === "fade" ||
+    validVariant === "slide" ||
+    validVariant === "typewriter" ||
+    validVariant === "wave"
   ) {
     const variants = getVariants();
 
     return (
-      <motion.div
-        ref={textRef as any}
-        initial="hidden"
-        animate={
-          triggerOnScroll ? (isInView ? "visible" : "hidden") : "visible"
-        }
-        variants={variants}
-        className={cn("overflow-hidden", className)}
+      <TuelErrorBoundary
+        animationType={validVariant}
+        onError={(error, errorInfo, errorId) => {
+          console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
+        }}
       >
-        {variant === "typewriter" ? (
-          children.split("").map((char, i) => (
-            <motion.span
-              key={i}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1 },
-              }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </motion.span>
-          ))
-        ) : (
-          <Component>{children}</Component>
-        )}
-      </motion.div>
+        <motion.div
+          ref={textRef as React.RefObject<HTMLDivElement>}
+          initial="hidden"
+          animate={
+            validTriggerOnScroll ? (isInView ? "visible" : "hidden") : "visible"
+          }
+          variants={variants}
+          className={cn("overflow-hidden", className)}
+          aria-label={`Animated text: ${validChildren}`}
+          role="text"
+          onAnimationStart={() => {
+            startAnimation();
+            startRender();
+          }}
+          onAnimationComplete={() => {
+            endAnimation();
+            endRender();
+          }}
+        >
+          {validVariant === "typewriter" ? (
+            validChildren.split("").map((char, i) => (
+              <motion.span
+                key={i}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
+                }}
+                onAnimationStart={() => recordFrame()}
+              >
+                {char === " " ? "\u00A0" : char}
+              </motion.span>
+            ))
+          ) : (
+            <Component>{validChildren}</Component>
+          )}
+        </motion.div>
+      </TuelErrorBoundary>
     );
   }
 
   // For GSAP animations
   return (
-    <Component
-      ref={textRef as any}
-      className={cn("overflow-hidden", className)}
+    <TuelErrorBoundary
+      animationType={validVariant}
+      onError={(error, errorInfo, errorId) => {
+        console.warn(`[TUEL] AnimatedText error (${validVariant}):`, error);
+      }}
     >
-      {children}
-    </Component>
+      <Component
+        ref={textRef as React.RefObject<HTMLElement>}
+        className={cn("overflow-hidden", className)}
+        aria-label={`Animated text: ${validChildren}`}
+        role="text"
+      >
+        {validChildren}
+      </Component>
+    </TuelErrorBoundary>
   );
 }

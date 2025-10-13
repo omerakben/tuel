@@ -383,8 +383,38 @@ function WodniackWorkScrollContent({
     cardsCanvasRef.current = cardsRenderer.domElement;
 
     return () => {
+      // Cleanup renderers
       lettersRenderer.dispose();
       cardsRenderer.dispose();
+
+      // Cleanup scenes
+      lettersScene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          if (object.geometry) object.geometry.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        }
+      });
+      lettersScene.clear();
+
+      cardsScene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          if (object.geometry) object.geometry.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        }
+      });
+      cardsScene.clear();
     };
   }, [createTextAnimationPath]);
 
@@ -392,8 +422,8 @@ function WodniackWorkScrollContent({
   const createLetterElements = useCallback(() => {
     if (!textContainerRef.current || !pathsRef.current.length) return;
 
-    // Clear existing letters
-    textContainerRef.current.innerHTML = "";
+    // Clear existing letters safely
+    textContainerRef.current.textContent = "";
     letterPositionsRef.current.clear();
 
     pathsRef.current.forEach((line, pathIndex) => {
@@ -702,12 +732,68 @@ function WodniackWorkScrollContent({
 
       window.removeEventListener("resize", handleResize);
 
-      // Cleanup Three.js
+      // Cleanup Three.js resources comprehensively
       if (lettersRendererRef.current) {
         lettersRendererRef.current.dispose();
       }
       if (cardsRendererRef.current) {
         cardsRendererRef.current.dispose();
+      }
+
+      // Cleanup scenes and remove all objects
+      if (lettersSceneRef.current) {
+        lettersSceneRef.current.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((material) => material.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          }
+        });
+        lettersSceneRef.current.clear();
+      }
+
+      if (cardsSceneRef.current) {
+        cardsSceneRef.current.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((material) => material.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          }
+        });
+        cardsSceneRef.current.clear();
+      }
+
+      // Cleanup textures
+      if (cardsTextureRef.current) {
+        cardsTextureRef.current.dispose();
+      }
+
+      // Cleanup paths and curves
+      pathsRef.current.forEach((path) => {
+        if (path.geometry) path.geometry.dispose();
+        if (path.material) {
+          if (Array.isArray(path.material)) {
+            path.material.forEach((material) => material.dispose());
+          } else {
+            path.material.dispose();
+          }
+        }
+      });
+      pathsRef.current = [];
+
+      // Cleanup texture canvas
+      if (textureCanvasRef.current) {
+        textureCanvasRef.current = null;
       }
     };
   }, [

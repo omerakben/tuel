@@ -1,6 +1,6 @@
 import { MeshWobbleMaterial, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { cn } from "@tuel/utils";
+import { cn, TuelErrorBoundary } from "@tuel/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -216,41 +216,48 @@ export function MorphingShapes({
   autoRotateSpeed = 1,
 }: MorphingShapesProps) {
   return (
-    <div className={cn("w-full h-full", className)}>
-      <Canvas
-        camera={{ position: cameraPosition, fov: 75 }}
-        style={{ background: backgroundColor }}
-      >
-        {fog && <fog attach="fog" args={[fogColor, fogNear, fogFar]} />}
+    <TuelErrorBoundary
+      animationType="morphing-shapes"
+      onError={(error, errorInfo, errorId) => {
+        console.warn(`[TUEL] MorphingShapes error:`, error);
+      }}
+    >
+      <div className={cn("w-full h-full", className)}>
+        <Canvas
+          camera={{ position: cameraPosition, fov: 75 }}
+          style={{ background: backgroundColor }}
+        >
+          {fog && <fog attach="fog" args={[fogColor, fogNear, fogFar]} />}
 
-        <ambientLight intensity={ambientLightIntensity} />
-        <pointLight
-          position={pointLightPosition}
-          intensity={pointLightIntensity}
-        />
-        <pointLight
-          position={[
-            -pointLightPosition[0],
-            -pointLightPosition[1],
-            -pointLightPosition[2],
-          ]}
-          intensity={pointLightIntensity * 0.5}
-          color="#ff6b6b"
-        />
-
-        {shapes.map((shape, index) => (
-          <MorphingMesh key={index} {...shape} />
-        ))}
-
-        {enableOrbitControls && (
-          <OrbitControls
-            enablePan={false}
-            enableZoom={false}
-            autoRotate={autoRotate}
-            autoRotateSpeed={autoRotateSpeed}
+          <ambientLight intensity={ambientLightIntensity} />
+          <pointLight
+            position={pointLightPosition}
+            intensity={pointLightIntensity}
           />
-        )}
-      </Canvas>
-    </div>
+          <pointLight
+            position={[
+              -pointLightPosition[0],
+              -pointLightPosition[1],
+              -pointLightPosition[2],
+            ]}
+            intensity={pointLightIntensity * 0.5}
+            color="#ff6b6b"
+          />
+
+          {shapes.map((shape, index) => (
+            <MorphingMesh key={index} {...shape} />
+          ))}
+
+          {enableOrbitControls && (
+            <OrbitControls
+              enablePan={false}
+              enableZoom={false}
+              autoRotate={autoRotate}
+              autoRotateSpeed={autoRotateSpeed}
+            />
+          )}
+        </Canvas>
+      </div>
+    </TuelErrorBoundary>
   );
 }

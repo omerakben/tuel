@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Skip TypeScript checking for migration-validation directory during build
+  // Enable strict TypeScript checking for production quality
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  // Skip ESLint during build to avoid issues with migration-validation
+  // Enable ESLint checking for production quality
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   // Try trailingSlash to help with routing
   trailingSlash: true,

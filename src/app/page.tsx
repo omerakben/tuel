@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Github, Package, Star } from "lucide-react";
+import { ArrowRight, Github, Package, Star, Play } from "lucide-react";
 
 export default function Home() {
   return (
@@ -258,10 +258,20 @@ export default function Home() {
             <motion.a
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              href="/playground"
+              className="inline-flex items-center px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors gap-2"
+            >
+              <Play size={20} />
+              Interactive Playground
+              <ArrowRight size={16} />
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
               href="https://github.com/omerakben/tuel"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors gap-2"
+              className="inline-flex items-center px-6 py-3 border border-white/20 text-white rounded-lg font-semibold hover:bg-white/10 transition-colors gap-2"
             >
               <Github size={20} />
               View on GitHub

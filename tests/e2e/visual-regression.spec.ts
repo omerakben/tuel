@@ -301,6 +301,306 @@ test.describe("Gallery Components Visual Regression", () => {
   });
 });
 
+// Visual regression tests for MagneticButton component
+test.describe("MagneticButton Visual Regression", () => {
+  let utils: VisualTestUtils;
+
+  test.beforeEach(async ({ page }) => {
+    utils = new VisualTestUtils(page);
+    await page.goto("/interaction");
+  });
+
+  test("magnetic button initial state", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="magnetic-button"]');
+
+    await utils.captureElementScreenshot(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-initial"
+    );
+  });
+
+  test("magnetic button hover state", async ({ page }) => {
+    const button = page.locator('[data-testid="magnetic-button"]');
+    await button.hover();
+    await page.waitForTimeout(500);
+
+    await utils.captureElementScreenshot(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-hover"
+    );
+  });
+
+  test("magnetic button active state", async ({ page }) => {
+    const button = page.locator('[data-testid="magnetic-button"]');
+    await button.click();
+    await page.waitForTimeout(500);
+
+    await utils.captureElementScreenshot(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-active"
+    );
+  });
+
+  test("magnetic button focus state", async ({ page }) => {
+    const button = page.locator('[data-testid="magnetic-button"]');
+    await button.focus();
+    await page.waitForTimeout(500);
+
+    await utils.captureElementScreenshot(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-focus"
+    );
+  });
+
+  test("magnetic button ripple effect", async ({ page }) => {
+    const button = page.locator('[data-testid="magnetic-button"]');
+    await button.click();
+
+    // Capture ripple effect
+    await page.waitForTimeout(100);
+    await utils.captureElementScreenshot(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-ripple"
+    );
+  });
+
+  test("magnetic button responsive design", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="magnetic-button"]');
+
+    await utils.testResponsiveDesign(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-responsive"
+    );
+  });
+
+  test("magnetic button dark mode", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="magnetic-button"]');
+
+    await utils.testDarkMode(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-theme"
+    );
+  });
+
+  test("magnetic button reduced motion", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="magnetic-button"]');
+
+    await utils.testReducedMotion(
+      '[data-testid="magnetic-button"]',
+      "magnetic-button-motion"
+    );
+  });
+
+  test("magnetic button error boundary", async ({ page }) => {
+    // Trigger error boundary
+    await page.evaluate(() => {
+      const element = document.querySelector('[data-testid="magnetic-button"]');
+      if (element) {
+        element.setAttribute("data-error", "true");
+      }
+    });
+
+    await page.waitForTimeout(1000);
+
+    await utils.captureElementScreenshot(
+      ".tuel-error-boundary",
+      "magnetic-button-error-boundary"
+    );
+  });
+});
+
+// Visual regression tests for Carousel component
+test.describe("Carousel Visual Regression", () => {
+  let utils: VisualTestUtils;
+
+  test.beforeEach(async ({ page }) => {
+    utils = new VisualTestUtils(page);
+    await page.goto("/ui");
+  });
+
+  test("carousel initial state", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel"]',
+      "carousel-initial"
+    );
+  });
+
+  test("carousel navigation buttons", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel-prev-button"]',
+      "carousel-prev-button"
+    );
+
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel-next-button"]',
+      "carousel-next-button"
+    );
+  });
+
+  test("carousel indicators", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel-indicator-0"]',
+      "carousel-indicator-active"
+    );
+
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel-indicator-1"]',
+      "carousel-indicator-inactive"
+    );
+  });
+
+  test("carousel slide transition", async ({ page }) => {
+    const nextButton = page.locator('[data-testid="carousel-next-button"]');
+    await nextButton.click();
+
+    // Capture during transition
+    await page.waitForTimeout(250);
+    await utils.captureElementScreenshot(
+      '[data-testid="carousel"]',
+      "carousel-transition"
+    );
+  });
+
+  test("carousel slide states", async ({ page }) => {
+    const indicators = page.locator('[data-testid^="carousel-indicator-"]');
+    const count = await indicators.count();
+
+    // Test different slide states
+    for (let i = 0; i < Math.min(count, 3); i++) {
+      await indicators.nth(i).click();
+      await page.waitForTimeout(1000);
+
+      await utils.captureElementScreenshot(
+        '[data-testid="carousel"]',
+        `carousel-slide-${i}`
+      );
+    }
+  });
+
+  test("carousel responsive design", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.testResponsiveDesign(
+      '[data-testid="carousel"]',
+      "carousel-responsive"
+    );
+  });
+
+  test("carousel dark mode", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.testDarkMode('[data-testid="carousel"]', "carousel-theme");
+  });
+
+  test("carousel reduced motion", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="carousel"]');
+
+    await utils.testReducedMotion(
+      '[data-testid="carousel"]',
+      "carousel-motion"
+    );
+  });
+
+  test("carousel error boundary", async ({ page }) => {
+    // Trigger error boundary
+    await page.evaluate(() => {
+      const element = document.querySelector('[data-testid="carousel"]');
+      if (element) {
+        element.setAttribute("data-error", "true");
+      }
+    });
+
+    await page.waitForTimeout(1000);
+
+    await utils.captureElementScreenshot(
+      ".tuel-error-boundary",
+      "carousel-error-boundary"
+    );
+  });
+});
+
+// Visual regression tests for HorizontalScroll component
+test.describe("HorizontalScroll Visual Regression", () => {
+  let utils: VisualTestUtils;
+
+  test.beforeEach(async ({ page }) => {
+    utils = new VisualTestUtils(page);
+    await page.goto("/scroll");
+  });
+
+  test("horizontal scroll initial state", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="horizontal-scroll"]');
+
+    await utils.captureElementScreenshot(
+      '[data-testid="horizontal-scroll"]',
+      "horizontal-scroll-initial"
+    );
+  });
+
+  test("horizontal scroll scrolled state", async ({ page }) => {
+    // Trigger scroll animation
+    await page.mouse.wheel(0, 500);
+    await page.waitForTimeout(1000);
+
+    await utils.captureElementScreenshot(
+      '[data-testid="horizontal-scroll"]',
+      "horizontal-scroll-scrolled"
+    );
+  });
+
+  test("horizontal scroll responsive design", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="horizontal-scroll"]');
+
+    await utils.testResponsiveDesign(
+      '[data-testid="horizontal-scroll"]',
+      "horizontal-scroll-responsive"
+    );
+  });
+
+  test("horizontal scroll dark mode", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="horizontal-scroll"]');
+
+    await utils.testDarkMode(
+      '[data-testid="horizontal-scroll"]',
+      "horizontal-scroll-theme"
+    );
+  });
+
+  test("horizontal scroll reduced motion", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="horizontal-scroll"]');
+
+    await utils.testReducedMotion(
+      '[data-testid="horizontal-scroll"]',
+      "horizontal-scroll-motion"
+    );
+  });
+
+  test("horizontal scroll error boundary", async ({ page }) => {
+    // Trigger error boundary
+    await page.evaluate(() => {
+      const element = document.querySelector(
+        '[data-testid="horizontal-scroll"]'
+      );
+      if (element) {
+        element.setAttribute("data-error", "true");
+      }
+    });
+
+    await page.waitForTimeout(1000);
+
+    await utils.captureElementScreenshot(
+      ".tuel-error-boundary",
+      "horizontal-scroll-error-boundary"
+    );
+  });
+});
+
 // Visual regression tests for Three.js components
 test.describe("Three.js Components Visual Regression", () => {
   let utils: VisualTestUtils;
@@ -310,28 +610,63 @@ test.describe("Three.js Components Visual Regression", () => {
     await page.goto("/three");
   });
 
-  test("3D scene visual state", async ({ page }) => {
-    await utils.waitForAnimation('[data-testid="three-scene"]');
+  test("three.js canvas initial state", async ({ page }) => {
+    await utils.waitForAnimation("canvas");
+
+    await utils.captureElementScreenshot("canvas", "three-canvas-initial");
+  });
+
+  test("three.js morphing shapes", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="morphing-shapes"]');
 
     await utils.captureElementScreenshot(
-      '[data-testid="three-scene"]',
-      "three-scene"
+      '[data-testid="morphing-shapes"]',
+      "morphing-shapes"
     );
   });
 
-  test("3D scene responsive design", async ({ page }) => {
-    await utils.waitForAnimation('[data-testid="three-scene"]');
+  test("three.js floating objects", async ({ page }) => {
+    await utils.waitForAnimation('[data-testid="floating-objects"]');
 
-    await utils.testResponsiveDesign(
-      '[data-testid="three-scene"]',
-      "three-responsive"
+    await utils.captureElementScreenshot(
+      '[data-testid="floating-objects"]',
+      "floating-objects"
     );
   });
 
-  test("3D scene dark mode", async ({ page }) => {
-    await utils.waitForAnimation('[data-testid="three-scene"]');
+  test("three.js responsive design", async ({ page }) => {
+    await utils.waitForAnimation("canvas");
 
-    await utils.testDarkMode('[data-testid="three-scene"]', "three-theme");
+    await utils.testResponsiveDesign("canvas", "three-responsive");
+  });
+
+  test("three.js dark mode", async ({ page }) => {
+    await utils.waitForAnimation("canvas");
+
+    await utils.testDarkMode("canvas", "three-theme");
+  });
+
+  test("three.js reduced motion", async ({ page }) => {
+    await utils.waitForAnimation("canvas");
+
+    await utils.testReducedMotion("canvas", "three-motion");
+  });
+
+  test("three.js error boundary", async ({ page }) => {
+    // Trigger error boundary
+    await page.evaluate(() => {
+      const element = document.querySelector("canvas");
+      if (element) {
+        element.setAttribute("data-error", "true");
+      }
+    });
+
+    await page.waitForTimeout(1000);
+
+    await utils.captureElementScreenshot(
+      ".tuel-error-boundary",
+      "three-error-boundary"
+    );
   });
 });
 

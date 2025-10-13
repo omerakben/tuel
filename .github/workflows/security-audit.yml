@@ -1,0 +1,129 @@
+name: Security Audit
+
+on:
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main]
+    schedule:
+        # Run security audit daily at 2 AM UTC
+        - cron: "0 2 * * *"
+
+jobs:
+    security-audit:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run dependency audit
+              run: npm audit --audit-level=moderate
+
+            - name: Run security audit script
+              run: npm run audit:security
+
+            - name: Run security E2E tests
+              run: npm run test:security
+
+            - name: Upload security audit results
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: security-audit-results
+                  path: security-audit-results.json
+
+            - name: Comment PR with security results
+              if: github.event_name == 'pull_request'
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const path = require('path');
+
+                      try {
+                        const resultsPath = path.join(process.cwd(), 'security-audit-results.json');
+                        if (fs.existsSync(resultsPath)) {
+                          const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+
+                          const comment = `## 🔒 Security Audit Results
+
+                          **Overall Security Score:** ${results.overallScore}/100
+
+                          ### 📊 Summary
+                          - **Dependencies:** ${results.dependencyAudit.vulnerableDependencies} vulnerabilities found
+                          - **XSS Tests:** ${results.xssTests.filter(t => t.passed).length}/${results.xssTests.length} passed
+                          - **CSP:** ${results.cspValidation.hasCSP ? '✅ Configured' : '❌ Not configured'}
+                          - **Security Headers:** ${Object.keys(results.securityHeaders.headers).length} configured
+                          - **Input Sanitization:** ${results.inputSanitization.overallPassed ? '✅ Passed' : '❌ Failed'}
+                          - **Error Boundaries:** ${results.errorBoundarySecurity.overallPassed ? '✅ Secure' : '❌ Needs improvement'}
+
+                          ### 🚨 Critical Issues
+                          ${results.dependencyAudit.criticalVulnerabilities > 0 ?
+                            `- **${results.dependencyAudit.criticalVulnerabilities} critical vulnerabilities** found` :
+                            '- No critical vulnerabilities found'}
+
+                          ### 💡 Recommendations
+                          ${results.recommendations.length > 0 ?
+                            results.recommendations.map(rec => `- ${rec}`).join('\n') :
+                            '- No recommendations'}
+
+                          ---
+                          *Security audit completed at ${results.timestamp}*`;
+
+                          github.rest.issues.createComment({
+                            issue_number: context.issue.number,
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            body: comment
+                          });
+                        }
+                      } catch (error) {
+                        console.log('Could not read security audit results:', error.message);
+                      }
+
+            - name: Fail if security score is too low
+              if: github.event_name == 'pull_request'
+              run: |
+                  if [ -f security-audit-results.json ]; then
+                    SCORE=$(node -p "JSON.parse(require('fs').readFileSync('security-audit-results.json', 'utf8')).overallScore")
+                    if [ "$SCORE" -lt 70 ]; then
+                      echo "❌ Security score $SCORE is below acceptable threshold (70)"
+                      exit 1
+                    else
+                      echo "✅ Security score $SCORE meets requirements"
+                    fi
+                  fi
+
+    dependency-scan:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run Snyk to check for vulnerabilities
+              uses: snyk/actions/node@master
+              continue-on-error: true
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+              with:
+                  args: --severity-threshold=high

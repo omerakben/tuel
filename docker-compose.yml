@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  # Main application
+  tuel:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: pnpm dev
+
+  # Testing service
+  tuel-test:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: pnpm test:all
+
+  # E2E testing service
+  tuel-e2e:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: pnpm test:e2e
+
+  # Performance testing service
+  tuel-performance:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: pnpm test:performance-benchmark
+
+  # Security testing service
+  tuel-security:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: pnpm test:security
+
+  # Documentation service
+  tuel-docs:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: pnpm docs:serve

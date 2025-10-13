@@ -76,6 +76,57 @@ export default defineConfig({
       name: "Google Chrome",
       use: { ...devices["Desktop Chrome"], channel: "chrome" },
     },
+
+    /* Additional browser versions for comprehensive testing */
+    {
+      name: "Chrome (Legacy)",
+      use: {
+        ...devices["Desktop Chrome"],
+        // Simulate older Chrome version
+        userAgent:
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36",
+      },
+    },
+    {
+      name: "Firefox (Legacy)",
+      use: {
+        ...devices["Desktop Firefox"],
+        // Simulate older Firefox version
+        userAgent:
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
+      },
+    },
+    {
+      name: "Safari (Legacy)",
+      use: {
+        ...devices["Desktop Safari"],
+        // Simulate older Safari version
+        userAgent:
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Safari/605.1.15",
+      },
+    },
+
+    /* Tablet testing */
+    {
+      name: "iPad",
+      use: { ...devices["iPad Pro"] },
+    },
+    {
+      name: "Android Tablet",
+      use: { ...devices["Galaxy Tab S4"] },
+    },
+
+    /* Low-end device testing */
+    {
+      name: "Low-end Mobile",
+      use: {
+        ...devices["Galaxy S III"],
+        // Simulate slower device
+        deviceScaleFactor: 1,
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
 
   /* Run your local dev server before starting the tests */

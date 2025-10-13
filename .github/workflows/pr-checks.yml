@@ -1,0 +1,246 @@
+name: Pull Request Checks
+
+on:
+    pull_request:
+        branches: [main, develop]
+        types: [opened, synchronize, reopened]
+
+env:
+    NODE_VERSION: "20"
+    PNPM_VERSION: "8"
+
+jobs:
+    pr-checks:
+        name: PR Quality Checks
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: ${{ env.PNPM_VERSION }}
+
+            - name: Get pnpm store directory
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - name: Setup pnpm cache
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Lint changed files
+              run: pnpm lint:changed
+
+            - name: Type check changed files
+              run: pnpm typecheck:changed
+
+            - name: Test changed packages
+              run: pnpm test:changed
+
+            - name: Check bundle size impact
+              run: pnpm bundle:check
+
+            - name: Security audit
+              run: pnpm audit:all
+
+            - name: Check for breaking changes
+              run: pnpm changeset:check
+
+    pr-preview:
+        name: PR Preview
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.draft == false
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: ${{ env.PNPM_VERSION }}
+
+            - name: Get pnpm store directory
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - name: Setup pnpm cache
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build packages
+              run: pnpm build
+
+            - name: Build demo
+              run: pnpm build:demo
+
+            - name: Deploy preview
+              uses: vercel/action@v1
+              with:
+                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+                  vercel-args: "--prod"
+
+            - name: Comment PR with preview link
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const { data: comments } = await github.rest.issues.listComments({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: context.issue.number,
+                      });
+
+                      const botComment = comments.find(comment =>
+                        comment.user.type === 'Bot' &&
+                        comment.body.includes('Preview deployed')
+                      );
+
+                      const previewUrl = process.env.VERCEL_URL || 'https://tuel-preview.vercel.app';
+
+                      const commentBody = `## 🚀 Preview Deployed
+
+                      Your changes have been deployed to a preview environment:
+
+                      **Preview URL:** ${previewUrl}
+
+                      This preview will be updated automatically as you push new commits to this PR.`;
+
+                      if (botComment) {
+                        await github.rest.issues.updateComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          comment_id: botComment.id,
+                          body: commentBody
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: context.issue.number,
+                          body: commentBody
+                        });
+                      }
+
+    pr-performance-check:
+        name: PR Performance Check
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.draft == false
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                  version: ${{ env.PNPM_VERSION }}
+
+            - name: Get pnpm store directory
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - name: Setup pnpm cache
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Install Playwright browsers
+              run: pnpm exec playwright install --with-deps
+
+            - name: Build packages
+              run: pnpm build
+
+            - name: Run performance benchmark
+              run: pnpm test:performance-benchmark
+
+            - name: Compare performance with main
+              run: pnpm performance:compare
+
+            - name: Comment PR with performance results
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const fs = require('fs');
+                      const path = require('path');
+
+                      let performanceReport = '## 📊 Performance Impact Analysis\n\n';
+
+                      try {
+                        const reportPath = path.join(process.cwd(), 'performance-results', 'comparison-report.md');
+                        if (fs.existsSync(reportPath)) {
+                          performanceReport += fs.readFileSync(reportPath, 'utf8');
+                        } else {
+                          performanceReport += 'Performance comparison completed. Check the workflow logs for details.';
+                        }
+                      } catch (error) {
+                        performanceReport += 'Performance comparison completed. Check the workflow logs for details.';
+                      }
+
+                      const { data: comments } = await github.rest.issues.listComments({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: context.issue.number,
+                      });
+
+                      const botComment = comments.find(comment =>
+                        comment.user.type === 'Bot' &&
+                        comment.body.includes('Performance Impact Analysis')
+                      );
+
+                      if (botComment) {
+                        await github.rest.issues.updateComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          comment_id: botComment.id,
+                          body: performanceReport
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          issue_number: context.issue.number,
+                          body: performanceReport
+                        });
+                      }

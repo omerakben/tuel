@@ -197,3 +197,15 @@ export * from "./performance";
 
 // Export accessibility utilities
 export * from "./accessibility";
+
+// Export browser compatibility utilities
+export * from "./browser-compatibility";
+
+// Export performance benchmarking utilities
+export * from "./performance-benchmark";
+
+// Export CI/CD configuration utilities
+export * from "./ci-cd-config";
+
+// Export error reporting and monitoring utilities
+export * from "./error-reporting";

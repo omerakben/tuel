@@ -193,18 +193,20 @@ describe("TuelConfigProvider", () => {
   });
 
   it("should handle localStorage errors gracefully", () => {
-    const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    
+    const consoleWarnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => {});
+
     // Mock localStorage.setItem to throw
-    const setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new Error("Storage full");
-    });
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new Error("Storage full");
+      });
 
     const { result } = renderHook(() => useTuelConfig(), {
       wrapper: ({ children }) => (
-        <TuelConfigProvider persistConfig={true}>
-          {children}
-        </TuelConfigProvider>
+        <TuelConfigProvider persistConfig={true}>{children}</TuelConfigProvider>
       ),
     });
 
@@ -234,34 +236,53 @@ describe("useConfigValue", () => {
   });
 
   it("should return updated value after config change", () => {
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <TuelConfigProvider>{children}</TuelConfigProvider>
+    // Use a single hook that tests both config and value together
+    const { result } = renderHook(
+      () => ({
+        config: useTuelConfig(),
+        value: useConfigValue("globalDuration"),
+      }),
+      {
+        wrapper: ({ children }) => (
+          <TuelConfigProvider>{children}</TuelConfigProvider>
+        ),
+      }
     );
 
-    const { result: configResult } = renderHook(() => useTuelConfig(), {
-      wrapper: Wrapper,
-    });
-
-    const { result: valueResult } = renderHook(
-      () => useConfigValue("globalDuration"),
-      { wrapper: Wrapper }
-    );
-
-    expect(valueResult.current).toBe(300);
+    expect(result.current.value).toBe(300);
 
     act(() => {
-      configResult.current.updateConfig({ globalDuration: 555 });
+      result.current.config.updateConfig({ globalDuration: 555 });
     });
 
-    expect(valueResult.current).toBe(555);
+    expect(result.current.value).toBe(555);
   });
 });
 
 describe("useAnimationConfig", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+
+    // Reset matchMedia to default (no reduced motion)
+    const mockMediaQuery = {
+      matches: false,
+      media: "",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+    window.matchMedia = vi.fn(() => mockMediaQuery);
+  });
+
   it("should return animation config with defaults", () => {
     const { result } = renderHook(() => useAnimationConfig(), {
       wrapper: ({ children }) => (
-        <TuelConfigProvider>{children}</TuelConfigProvider>
+        <TuelConfigProvider storageKey="test-animation-config-defaults">
+          {children}
+        </TuelConfigProvider>
       ),
     });
 
@@ -271,17 +292,33 @@ describe("useAnimationConfig", () => {
     expect(result.current.shouldAnimate).toBe(true);
   });
 
-  it("should return zero duration when reducedMotion is true", () => {
+  it("should return zero duration when reducedMotion is true", async () => {
+    // Mock matchMedia to return true for reduced motion preference
+    const mockMediaQuery = {
+      matches: true, // ✅ Return true to simulate reduced motion preference
+      media: "(prefers-reduced-motion: reduce)",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+    window.matchMedia = vi.fn(() => mockMediaQuery);
+
     const { result } = renderHook(() => useAnimationConfig(), {
       wrapper: ({ children }) => (
         <TuelConfigProvider
-          initialConfig={{
-            reducedMotion: true,
-          }}
+          persistConfig={false}
+          storageKey="test-reduced-motion"
         >
           {children}
         </TuelConfigProvider>
       ),
+    });
+
+    // Wait for the effect to run and update reducedMotion
+    await waitFor(() => {
+      expect(result.current.reducedMotion).toBe(true);
     });
 
     expect(result.current.duration).toBe(0);
@@ -289,31 +326,51 @@ describe("useAnimationConfig", () => {
   });
 
   it("should update when config changes", () => {
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <TuelConfigProvider>{children}</TuelConfigProvider>
+    // Use a single hook that tests both config and animation config together
+    const { result } = renderHook(
+      () => ({
+        config: useTuelConfig(),
+        animConfig: useAnimationConfig(),
+      }),
+      {
+        wrapper: ({ children }) => (
+          <TuelConfigProvider storageKey="test-animation-config-update">
+            {children}
+          </TuelConfigProvider>
+        ),
+      }
     );
 
-    const { result: configResult } = renderHook(() => useTuelConfig(), {
-      wrapper: Wrapper,
-    });
-
-    const { result: animResult } = renderHook(() => useAnimationConfig(), {
-      wrapper: Wrapper,
-    });
-
     act(() => {
-      configResult.current.updateConfig({
+      result.current.config.updateConfig({
         globalDuration: 450,
         globalEase: "linear",
       });
     });
 
-    expect(animResult.current.duration).toBe(450);
-    expect(animResult.current.ease).toBe("linear");
+    expect(result.current.animConfig.duration).toBe(450);
+    expect(result.current.animConfig.ease).toBe("linear");
   });
 });
 
 describe("withTuelConfig HOC", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+
+    // Reset matchMedia to default (no reduced motion)
+    const mockMediaQuery = {
+      matches: false,
+      media: "",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+    window.matchMedia = vi.fn(() => mockMediaQuery);
+  });
+
   it("should inject animation config as props", () => {
     interface TestComponentProps {
       duration: number;
@@ -340,6 +397,7 @@ describe("withTuelConfig HOC", () => {
 
     render(
       <TuelConfigProvider
+        storageKey="test-hoc-config"
         initialConfig={{
           globalDuration: 400,
           globalEase: "linear",
@@ -395,16 +453,16 @@ describe("Stress Testing and Edge Cases", () => {
 
   it("handles localStorage quota exceeded gracefully", () => {
     // Mock localStorage.setItem to throw QuotaExceededError
-    const setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new DOMException("QuotaExceededError", "QuotaExceededError");
-    });
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new DOMException("QuotaExceededError", "QuotaExceededError");
+      });
 
     // Should not crash when localStorage is full
     const { result } = renderHook(() => useTuelConfig(), {
       wrapper: ({ children }) => (
-        <TuelConfigProvider persistConfig={true}>
-          {children}
-        </TuelConfigProvider>
+        <TuelConfigProvider persistConfig={true}>{children}</TuelConfigProvider>
       ),
     });
 
@@ -481,42 +539,48 @@ describe("Stress Testing and Edge Cases", () => {
       return;
     }
 
-    const addEventListenerSpy = vi.spyOn(
-      window.MediaQueryList.prototype,
-      "addEventListener"
-    );
-    const removeEventListenerSpy = vi.spyOn(
-      window.MediaQueryList.prototype,
-      "removeEventListener"
-    );
+    // Create a mock MediaQueryList
+    const mockMediaQuery = {
+      matches: false,
+      media: "(prefers-reduced-motion: reduce)",
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+
+    // Mock matchMedia to return our mock
+    const matchMediaMock = vi.fn(() => mockMediaQuery);
+    window.matchMedia = matchMediaMock;
 
     const { unmount } = renderHook(() => useTuelConfig(), {
       wrapper: ({ children }) => (
-        <TuelConfigProvider>{children}</TuelConfigProvider>
+        <TuelConfigProvider storageKey="test-listener-accumulation">
+          {children}
+        </TuelConfigProvider>
       ),
     });
 
     // Wait for effects to run
     await waitFor(() => {
-      expect(addEventListenerSpy).toHaveBeenCalled();
+      expect(mockMediaQuery.addEventListener).toHaveBeenCalled();
     });
 
-    const addCallCount = addEventListenerSpy.mock.calls.length;
+    const addCallCount = mockMediaQuery.addEventListener.mock.calls.length;
 
     unmount();
 
     // Verify cleanup was called
     await waitFor(() => {
-      expect(removeEventListenerSpy).toHaveBeenCalled();
+      expect(mockMediaQuery.removeEventListener).toHaveBeenCalled();
     });
 
-    const removeCallCount = removeEventListenerSpy.mock.calls.length;
+    const removeCallCount =
+      mockMediaQuery.removeEventListener.mock.calls.length;
 
     // Each addEventListener should have a corresponding removeEventListener
     expect(removeCallCount).toBe(addCallCount);
-
-    addEventListenerSpy.mockRestore();
-    removeEventListenerSpy.mockRestore();
   });
 
   it("handles corrupted localStorage data gracefully", () => {
@@ -529,9 +593,7 @@ describe("Stress Testing and Edge Cases", () => {
 
     const { result } = renderHook(() => useTuelConfig(), {
       wrapper: ({ children }) => (
-        <TuelConfigProvider persistConfig={true}>
-          {children}
-        </TuelConfigProvider>
+        <TuelConfigProvider persistConfig={true}>{children}</TuelConfigProvider>
       ),
     });
 

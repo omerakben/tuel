@@ -198,43 +198,51 @@ export function TuelConfigProvider({
 
   // Auto-detect reduced motion preference
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || !window.matchMedia) return;
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateReducedMotion = (event: MediaQueryListEvent) => {
-      updateConfig({ reducedMotion: event.matches });
+    if (!mediaQuery) return;
+
+    const updateReducedMotion = (e?: MediaQueryListEvent) => {
+      const matches = e ? e.matches : mediaQuery.matches;
+      setConfig((prev) => ({ ...prev, reducedMotion: matches }));
     };
 
     // Set initial value
-    if (mediaQuery.matches !== config.reducedMotion) {
-      updateConfig({ reducedMotion: mediaQuery.matches });
-    }
+    updateReducedMotion();
 
     mediaQuery.addEventListener("change", updateReducedMotion);
     return () => mediaQuery.removeEventListener("change", updateReducedMotion);
-  }, [config.reducedMotion, updateConfig]);
+  }, []); // Empty deps - use setConfig directly to avoid listener accumulation
 
   // Auto-detect theme preference
   useEffect(() => {
-    if (typeof window === "undefined" || config.theme !== "auto") return;
+    if (typeof window === "undefined" || !window.matchMedia) return;
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    if (!mediaQuery) return;
     const updateTheme = () => {
-      const isDark = mediaQuery.matches;
-      updateConfig({
-        colorScheme: {
-          ...config.colorScheme,
-          background: isDark ? "#0f172a" : "#ffffff",
-          surface: isDark ? "#1e293b" : "#f8fafc",
-          text: isDark ? "#f1f5f9" : "#1e293b",
-        },
+      setConfig((prev) => {
+        // Only update if theme is set to "auto"
+        if (prev.theme !== "auto") return prev;
+
+        const isDark = mediaQuery.matches;
+        return {
+          ...prev,
+          colorScheme: {
+            ...prev.colorScheme,
+            background: isDark ? "#0f172a" : "#ffffff",
+            surface: isDark ? "#1e293b" : "#f8fafc",
+            text: isDark ? "#f1f5f9" : "#1e293b",
+          },
+        };
       });
     };
 
     updateTheme();
     mediaQuery.addEventListener("change", updateTheme);
     return () => mediaQuery.removeEventListener("change", updateTheme);
-  }, [config.theme, config.colorScheme, updateConfig]);
+  }, []); // Empty deps - use setConfig directly to avoid listener accumulation
 
   const contextValue: TuelConfigContextValue = {
     config,

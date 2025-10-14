@@ -99,6 +99,40 @@ describe("debounce", () => {
     expect(func).toHaveBeenCalledWith("arg1", "arg2");
   });
 
+  it("has a cancel method", () => {
+    const func = vi.fn();
+    const debouncedFunc = debounce(func, 300);
+
+    expect(typeof debouncedFunc.cancel).toBe("function");
+  });
+
+  it("cancels pending execution when cancel is called", () => {
+    const func = vi.fn();
+    const debouncedFunc = debounce(func, 300);
+
+    debouncedFunc();
+    vi.advanceTimersByTime(100);
+    
+    debouncedFunc.cancel();
+    vi.advanceTimersByTime(300);
+
+    expect(func).not.toHaveBeenCalled();
+  });
+
+  it("prevents memory leaks by cancelling timeout", () => {
+    const func = vi.fn();
+    const debouncedFunc = debounce(func, 300);
+
+    // Multiple calls followed by cancel
+    for (let i = 0; i < 100; i++) {
+      debouncedFunc();
+    }
+    debouncedFunc.cancel();
+    
+    vi.advanceTimersByTime(1000);
+    expect(func).not.toHaveBeenCalled();
+  });
+
   it("handles multiple argument types", () => {
     const func = vi.fn();
     const debouncedFunc = debounce(func, 300);
@@ -181,6 +215,41 @@ describe("throttle", () => {
     throttledFunc();
     expect(func).toHaveBeenCalledTimes(2);
   });
+
+  it("has a cancel method", () => {
+    const func = vi.fn();
+    const throttledFunc = throttle(func, 300);
+
+    expect(typeof throttledFunc.cancel).toBe("function");
+  });
+
+  it("cancels pending throttle state when cancel is called", () => {
+    const func = vi.fn();
+    const throttledFunc = throttle(func, 300);
+
+    // First call executes
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(1);
+
+    // Cancel the throttle state
+    throttledFunc.cancel();
+
+    // Should be able to call immediately after cancel
+    throttledFunc();
+    expect(func).toHaveBeenCalledTimes(2);
+  });
+
+  it("prevents memory leaks by cancelling timeout", () => {
+    const func = vi.fn();
+    const throttledFunc = throttle(func, 300);
+
+    throttledFunc();
+    throttledFunc.cancel();
+    
+    vi.advanceTimersByTime(1000);
+    // Function should have been called only once (before cancel)
+    expect(func).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("clamp", () => {
@@ -210,6 +279,35 @@ describe("clamp", () => {
     expect(clamp(5.5, 0, 10)).toBe(5.5);
     expect(clamp(-0.5, 0, 10)).toBe(0);
     expect(clamp(10.5, 0, 10)).toBe(10);
+  });
+
+  it("throws on NaN value", () => {
+    expect(() => clamp(NaN, 0, 10)).toThrow("clamp: value must be a finite number");
+  });
+
+  it("throws on NaN min", () => {
+    expect(() => clamp(5, NaN, 10)).toThrow("clamp: min must be a finite number");
+  });
+
+  it("throws on NaN max", () => {
+    expect(() => clamp(5, 0, NaN)).toThrow("clamp: max must be a finite number");
+  });
+
+  it("throws on Infinity value", () => {
+    expect(() => clamp(Infinity, 0, 10)).toThrow("clamp: value must be a finite number");
+  });
+
+  it("throws on -Infinity value", () => {
+    expect(() => clamp(-Infinity, 0, 10)).toThrow("clamp: value must be a finite number");
+  });
+
+  it("throws when min is greater than max", () => {
+    expect(() => clamp(5, 10, 0)).toThrow("clamp: min (10) must be less than or equal to max (0)");
+  });
+
+  it("handles very large numbers", () => {
+    expect(clamp(Number.MAX_SAFE_INTEGER, 0, 100)).toBe(100);
+    expect(clamp(Number.MIN_SAFE_INTEGER, 0, 100)).toBe(0);
   });
 });
 
@@ -249,6 +347,29 @@ describe("lerp", () => {
     expect(lerp(0.5, 1.5, 0.5)).toBe(1);
     expect(lerp(1.1, 2.2, 0.5)).toBeCloseTo(1.65, 10);
   });
+
+  it("throws on NaN start", () => {
+    expect(() => lerp(NaN, 100, 0.5)).toThrow("lerp: start must be a finite number");
+  });
+
+  it("throws on NaN end", () => {
+    expect(() => lerp(0, NaN, 0.5)).toThrow("lerp: end must be a finite number");
+  });
+
+  it("throws on NaN t", () => {
+    expect(() => lerp(0, 100, NaN)).toThrow("lerp: t must be a finite number");
+  });
+
+  it("throws on Infinity values", () => {
+    expect(() => lerp(Infinity, 100, 0.5)).toThrow("lerp: start must be a finite number");
+    expect(() => lerp(0, Infinity, 0.5)).toThrow("lerp: end must be a finite number");
+    expect(() => lerp(0, 100, Infinity)).toThrow("lerp: t must be a finite number");
+  });
+
+  it("handles very large numbers", () => {
+    const result = lerp(0, Number.MAX_SAFE_INTEGER, 0.5);
+    expect(result).toBeCloseTo(Number.MAX_SAFE_INTEGER / 2, -10);
+  });
 });
 
 describe("range", () => {
@@ -281,15 +402,54 @@ describe("range", () => {
   });
 
   it("throws error for zero step", () => {
-    expect(() => range(0, 10, 0)).toThrow("Step cannot be zero");
+    expect(() => range(0, 10, 0)).toThrow("range: step cannot be zero");
   });
 
-  it("returns empty array when range is impossible with positive step", () => {
-    expect(range(5, 1, 1)).toEqual([]);
+  it("throws on NaN start", () => {
+    expect(() => range(NaN, 10)).toThrow("range: start must be a finite number");
   });
 
-  it("returns empty array when range is impossible with negative step", () => {
-    expect(range(1, 5, -1)).toEqual([]);
+  it("throws on NaN end", () => {
+    expect(() => range(0, NaN)).toThrow("range: end must be a finite number");
+  });
+
+  it("throws on NaN step", () => {
+    expect(() => range(0, 10, NaN)).toThrow("range: step must be a finite number");
+  });
+
+  it("throws on Infinity values", () => {
+    expect(() => range(Infinity, 10)).toThrow("range: start must be a finite number");
+    expect(() => range(0, Infinity)).toThrow("range: end must be a finite number");
+    expect(() => range(0, 10, Infinity)).toThrow("range: step must be a finite number");
+  });
+
+  it("throws when step direction doesn't match range direction (positive step, descending range)", () => {
+    expect(() => range(10, 1, 1)).toThrow("range: step direction (1) doesn't match");
+  });
+
+  it("throws when step direction doesn't match range direction (negative step, ascending range)", () => {
+    expect(() => range(1, 10, -1)).toThrow("range: step direction (-1) doesn't match");
+  });
+
+  it("prevents DoS with tiny positive step", () => {
+    expect(() => range(0, 1000000, 0.0001)).toThrow("range: would generate");
+    expect(() => range(0, 1000000, 0.0001)).toThrow("exceeds maximum of 1000000");
+  });
+
+  it("prevents DoS with tiny negative step", () => {
+    expect(() => range(1000000, 0, -0.0001)).toThrow("range: would generate");
+  });
+
+  it("handles very large numbers within bounds", () => {
+    const result = range(Number.MAX_SAFE_INTEGER - 5, Number.MAX_SAFE_INTEGER - 3);
+    expect(result.length).toBe(3);
+  });
+
+  it("allows ranges up to 1 million elements", () => {
+    const result = range(0, 999999);
+    expect(result.length).toBe(1000000);
+    expect(result[0]).toBe(0);
+    expect(result[999999]).toBe(999999);
   });
 
   it("handles descending range with decimal negative step", () => {

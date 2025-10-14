@@ -7,16 +7,15 @@
 
 const fs = require("fs");
 const path = require("path");
-const { glob } = require("glob");
 
-async function auditVersions() {
+function auditVersions() {
   console.log("🔍 Auditing Package Versions\n");
 
   // Find all package.json files
-  const packageFiles = await glob("packages/*/package.json", {
-    cwd: path.join(__dirname, ".."),
-    absolute: true,
-  });
+  const packagesDir = path.join(__dirname, "..", "packages");
+  const packageFiles = fs.readdirSync(packagesDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => path.join(packagesDir, dirent.name, "package.json"));
 
   // Add root package.json
   packageFiles.unshift(path.join(__dirname, "..", "package.json"));
@@ -82,7 +81,9 @@ async function auditVersions() {
   }
 }
 
-auditVersions().catch((error) => {
+try {
+  auditVersions();
+} catch (error) {
   console.error("❌ Audit failed:", error);
   process.exit(1);
-});
+}

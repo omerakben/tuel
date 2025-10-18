@@ -8,6 +8,45 @@ importers:
 
   .:
     dependencies:
+      '@tuel/config':
+        specifier: workspace:*
+        version: link:packages/config
+      '@tuel/gallery':
+        specifier: workspace:*
+        version: link:packages/gallery
+      '@tuel/gsap':
+        specifier: workspace:*
+        version: link:packages/gsap
+      '@tuel/interaction':
+        specifier: workspace:*
+        version: link:packages/interaction
+      '@tuel/motion':
+        specifier: workspace:*
+        version: link:packages/motion
+      '@tuel/performance':
+        specifier: workspace:*
+        version: link:packages/performance
+      '@tuel/scroll':
+        specifier: workspace:*
+        version: link:packages/scroll
+      '@tuel/state':
+        specifier: workspace:*
+        version: link:packages/state
+      '@tuel/text-effects':
+        specifier: workspace:*
+        version: link:packages/text-effects
+      '@tuel/three':
+        specifier: workspace:*
+        version: link:packages/three
+      '@tuel/tokens':
+        specifier: workspace:*
+        version: link:packages/tokens
+      '@tuel/ui':
+        specifier: workspace:*
+        version: link:packages/ui
+      '@tuel/utils':
+        specifier: workspace:*
+        version: link:packages/utils
       framer-motion:
         specifier: ^12.23.12
         version: 12.23.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

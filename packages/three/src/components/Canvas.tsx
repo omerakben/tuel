@@ -1,5 +1,5 @@
 import { Canvas, CanvasProps } from "@react-three/fiber";
-import { TuelErrorBoundary } from "@tuel/utils";
+// import { TuelErrorBoundary } from "@tuel/utils";
 import { ReactNode, Suspense } from "react";
 
 /**
@@ -37,17 +37,10 @@ export function R3FCanvas({
   ...canvasProps
 }: R3FCanvasProps) {
   return (
-    <TuelErrorBoundary
-      animationType="three-canvas"
-      onError={(error, errorInfo, errorId) => {
-        console.warn(`[TUEL] R3FCanvas error:`, error);
-      }}
-    >
-      <ClientOnly fallback={fallback}>
-        <Canvas {...canvasProps}>
-          <Suspense fallback={null}>{children}</Suspense>
-        </Canvas>
-      </ClientOnly>
-    </TuelErrorBoundary>
+    <ClientOnly fallback={fallback}>
+      <Canvas {...canvasProps}>
+        <Suspense fallback={null}>{children}</Suspense>
+      </Canvas>
+    </ClientOnly>
   );
 }

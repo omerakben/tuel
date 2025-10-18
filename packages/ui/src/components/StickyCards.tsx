@@ -41,7 +41,7 @@ export function StickyCards({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const target = entry.target as HTMLElement;
+          const target = entry.target as HTMLDivElement;
           const index = cardsRef.current.indexOf(target);
 
           if (entry.isIntersecting) {

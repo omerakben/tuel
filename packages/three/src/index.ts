@@ -7,7 +7,7 @@ export type {
   FloatingObjectsProps,
 } from "./components/FloatingObjects";
 
-export { ExampleOrbitBox, ThreeOrbitScene } from "./components/ThreeOrbitScene";
+export { ThreeOrbitScene } from "./components/ThreeOrbitScene";
 export type { ThreeOrbitSceneProps } from "./components/ThreeOrbitScene";
 
 export { MorphingShapes } from "./components/MorphingShapes";

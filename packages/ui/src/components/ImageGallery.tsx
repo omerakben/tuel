@@ -65,8 +65,8 @@ export function ImageGallery({
   };
 
   // Layout styles
-  const getLayoutStyles = () => {
-    const baseStyles = {
+  const getLayoutStyles = (): React.CSSProperties => {
+    const baseStyles: React.CSSProperties = {
       display: "grid",
       gap: `${gap}px`,
     };
@@ -82,8 +82,8 @@ export function ImageGallery({
         return {
           display: "flex",
           gap: `${gap}px`,
-          overflowX: "auto",
-          scrollSnapType: "x mandatory",
+          overflowX: "auto" as const,
+          scrollSnapType: "x mandatory" as const,
         };
       case "stack":
         return {

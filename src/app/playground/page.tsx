@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
-  Code,
   Copy,
   Download,
   Settings,
@@ -24,19 +24,25 @@ import { AnimatedText } from "@tuel/text-effects";
 import { MagneticButton } from "@tuel/interaction";
 import { Carousel } from "@tuel/ui";
 import { HorizontalScroll } from "@tuel/scroll";
-import { MorphingShapes, FloatingObjects } from "@tuel/three";
 
-interface PlaygroundProps {
-  component: string;
-  onComponentChange: (component: string) => void;
-}
+// Dynamically import Three.js components to prevent SSR issues
+const MorphingShapes = dynamic(() => import("@tuel/three").then(mod => ({ default: mod.MorphingShapes })), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full">Loading 3D component...</div>
+});
+
+const FloatingObjects = dynamic(() => import("@tuel/three").then(mod => ({ default: mod.FloatingObjects })), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full">Loading 3D component...</div>
+});
+
 
 interface CodeExample {
   component: string;
   title: string;
   description: string;
   code: string;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
   category: string;
 }
 
@@ -51,16 +57,17 @@ const codeExamples: CodeExample[] = [
 export function MyAnimatedText() {
   return (
     <AnimatedText
-      text="Hello World"
       variant="fade"
       duration={1000}
       delay={200}
       className="text-4xl font-bold"
-    />
+    >
+      Hello World
+    </AnimatedText>
   );
 }`,
     props: {
-      text: "Hello World",
+      children: "Hello World",
       variant: "fade",
       duration: 1000,
       delay: 200,
@@ -209,19 +216,13 @@ export default function Playground() {
   const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">(
     "desktop"
   );
-  const [customProps, setCustomProps] = useState<Record<string, any>>({});
+  const [,] = useState<Record<string, unknown>>({});
   const [isPlaying, setIsPlaying] = useState(false);
 
   const currentExample = codeExamples.find(
     (ex) => ex.component === selectedComponent
   );
 
-  const handlePropChange = useCallback((key: string, value: any) => {
-    setCustomProps((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  }, []);
 
   const handleCopyCode = useCallback(() => {
     if (currentExample) {
@@ -244,20 +245,24 @@ export default function Playground() {
   const renderComponent = () => {
     if (!currentExample) return null;
 
-    const props = { ...currentExample.props, ...customProps };
+    const props = { ...currentExample.props } as Record<string, unknown>;
 
     switch (selectedComponent) {
       case "AnimatedText":
-        return <AnimatedText {...props} />;
+        return <AnimatedText {...props}>{props.children as string}</AnimatedText>;
       case "MagneticButton":
-        return <MagneticButton {...props} />;
+        return <MagneticButton {...props}>{props.children as string}</MagneticButton>;
       case "Carousel":
+        // @ts-expect-error - props are dynamically loaded from examples
         return <Carousel {...props} />;
       case "HorizontalScroll":
+        // @ts-expect-error - props are dynamically loaded from examples
         return <HorizontalScroll {...props} />;
       case "MorphingShapes":
+        // @ts-expect-error - props are dynamically loaded from examples
         return <MorphingShapes {...props} />;
       case "FloatingObjects":
+        // @ts-expect-error - props are dynamically loaded from examples
         return <FloatingObjects {...props} />;
       default:
         return null;

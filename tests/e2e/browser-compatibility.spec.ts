@@ -158,7 +158,7 @@ class BrowserCompatibilityUtils {
           spreadOperator: (() => { const arr = [...[1,2,3]]; return arr.length === 3 })(),
           asyncAwait: (() => { try { eval('async () => {}'); return true; } catch { return false; } })(),
           promises: typeof Promise !== 'undefined',
-          modules: typeof import !== 'undefined',
+          modules: (() => { try { eval('import("data:text/javascript,")'); return true; } catch { return false; } })(),
           classes: (() => { try { eval('class Test {}'); return true; } catch { return false; } })()
         },
         es2017: {
@@ -184,7 +184,7 @@ class BrowserCompatibilityUtils {
           optionalChaining: (() => { try { eval('const obj = {}; obj?.prop'); return true; } catch { return false; } })(),
           nullishCoalescing: (() => { try { eval('const a = null ?? 1'); return true; } catch { return false; } })(),
           bigInt: typeof BigInt !== 'undefined',
-          dynamicImport: typeof import !== 'undefined'
+          dynamicImport: (() => { try { eval('import("data:text/javascript,")'); return true; } catch { return false; } })()
         },
         webAPIs: {
           fetch: typeof fetch !== 'undefined',

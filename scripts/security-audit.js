@@ -13,30 +13,32 @@
  */
 
 import { execSync } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-interface SecurityAuditResult {
-  timestamp: string;
-  dependencyAudit: DependencyAuditResult;
-  xssTests: XSSTestResult[];
-  cspValidation: CSPValidationResult;
-  securityHeaders: SecurityHeaderResult;
-  inputSanitization: InputSanitizationResult;
-  errorBoundarySecurity: ErrorBoundarySecurityResult;
-  overallScore: number;
-  recommendations: string[];
-}
+/**
+ * @typedef {Object} SecurityAuditResult
+ * @property {string} timestamp
+ * @property {DependencyAuditResult} dependencyAudit
+ * @property {XSSTestResult[]} xssTests
+ * @property {CSPValidationResult} cspValidation
+ * @property {SecurityHeaderResult} securityHeaders
+ * @property {InputSanitizationResult} inputSanitization
+ * @property {ErrorBoundarySecurityResult} errorBoundarySecurity
+ * @property {number} overallScore
+ * @property {string[]} recommendations
+ */
 
-interface DependencyAuditResult {
-  vulnerabilities: Vulnerability[];
-  totalDependencies: number;
-  vulnerableDependencies: number;
-  criticalVulnerabilities: number;
-  highVulnerabilities: number;
-  mediumVulnerabilities: number;
-  lowVulnerabilities: number;
-}
+/**
+ * @typedef {Object} DependencyAuditResult
+ * @property {Vulnerability[]} vulnerabilities
+ * @property {number} totalDependencies
+ * @property {number} vulnerableDependencies
+ * @property {number} criticalVulnerabilities
+ * @property {number} highVulnerabilities
+ * @property {number} mediumVulnerabilities
+ * @property {number} lowVulnerabilities
+ */
 
 interface Vulnerability {
   package: string;

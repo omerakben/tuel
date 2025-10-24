@@ -1,4 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+
+// Unmock @tuel/utils to test the actual implementation
+vi.unmock("@tuel/utils");
+
 import { cn, isServer, isClient, debounce, throttle, clamp, lerp, range } from "../index";
 
 describe("cn", () => {

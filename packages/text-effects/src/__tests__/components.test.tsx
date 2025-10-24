@@ -55,7 +55,7 @@ describe("AnimatedText", () => {
 
     variants.forEach((variant) => {
       const { unmount } = render(
-        <AnimatedText variant={variant}>Test {variant}</AnimatedText>
+        <AnimatedText variant={variant}>{`Test ${variant}`}</AnimatedText>
       );
       expect(screen.getByText(`Test ${variant}`)).toBeInTheDocument();
       unmount();
@@ -67,7 +67,7 @@ describe("AnimatedText", () => {
 
     splitTypes.forEach((splitType) => {
       const { unmount } = render(
-        <AnimatedText splitType={splitType}>Test {splitType}</AnimatedText>
+        <AnimatedText splitType={splitType}>{`Test ${splitType}`}</AnimatedText>
       );
       expect(screen.getByText(`Test ${splitType}`)).toBeInTheDocument();
       unmount();
@@ -80,8 +80,9 @@ describe("AnimatedText", () => {
   });
 
   it("handles empty text gracefully", () => {
-    render(<AnimatedText></AnimatedText>);
-    expect(screen.getByText("")).toBeInTheDocument();
+    render(<AnimatedText>{""}</AnimatedText>);
+    const container = screen.getByText("", { selector: "*" });
+    expect(container).toBeInTheDocument();
   });
 
   it("applies custom duration and delay", () => {

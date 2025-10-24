@@ -209,17 +209,25 @@ export function validateColor(
     return { isValid: false, value: defaultValue };
   }
 
-  // Basic color validation (hex, rgb, hsl, or CSS color names)
-  const colorRegex =
-    /^(#[0-9A-Fa-f]{3,6}|rgb\(|rgba\(|hsl\(|hsla\(|[a-zA-Z]+)$/;
-  if (!colorRegex.test(value.trim())) {
+  // Trim whitespace
+  const trimmedValue = value.trim();
+
+  // Validate various color formats
+  const isValidHex = /^#([0-9A-F]{3}){1,2}$/i.test(trimmedValue);
+  const isValidRgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i.test(trimmedValue);
+  const isValidRgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i.test(trimmedValue);
+  const isValidHsl = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/i.test(trimmedValue);
+  const isValidHsla = /^hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*[\d.]+\s*\)$/i.test(trimmedValue);
+  const isValidNamed = /^[a-zA-Z]+$/.test(trimmedValue) || ["transparent", "currentColor"].includes(trimmedValue);
+
+  if (!isValidHex && !isValidRgb && !isValidRgba && !isValidHsl && !isValidHsla && !isValidNamed) {
     console.warn(
       `[TUEL] Invalid color format: ${value}, using default ${defaultValue}`
     );
     return { isValid: false, value: defaultValue };
   }
 
-  return { isValid: true, value: value.trim() };
+  return { isValid: true, value: trimmedValue };
 }
 
 /**

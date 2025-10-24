@@ -181,14 +181,14 @@ describe("Security: XSS Prevention", () => {
 
 describe("Security: Input Sanitization", () => {
   it("should handle null and undefined safely", () => {
-    // @ts-expect-error Testing invalid input
     const { container: container1 } = render(
+      // @ts-expect-error Testing invalid input
       <AnimatedText>{null}</AnimatedText>
     );
     expect(container1.textContent).toBe("");
 
-    // @ts-expect-error Testing invalid input
     const { container: container2 } = render(
+      // @ts-expect-error Testing invalid input
       <AnimatedText>{undefined}</AnimatedText>
     );
     expect(container2.textContent).toBe("");
@@ -218,9 +218,9 @@ describe("Security: Input Sanitization", () => {
 
 describe("Security: Component Props Validation", () => {
   it("should validate variant prop and use safe default", () => {
-    // @ts-expect-error Testing invalid input
     const { container } = render(
-      <AnimatedText variant="<script>alert(1)</script>">Test</AnimatedText>
+      // @ts-expect-error Testing invalid input
+      <AnimatedText variant="<script>alert(1)</script>" as any>Test</AnimatedText>
     );
 
     // Should fallback to safe default variant
@@ -229,9 +229,9 @@ describe("Security: Component Props Validation", () => {
   });
 
   it("should validate splitType prop and use safe default", () => {
-    // @ts-expect-error Testing invalid input
     const { container } = render(
-      <AnimatedText splitType="malicious">Test</AnimatedText>
+      // @ts-expect-error Testing invalid input
+      <AnimatedText splitType="malicious" as any>Test</AnimatedText>
     );
 
     // Should fallback to safe default
@@ -240,9 +240,9 @@ describe("Security: Component Props Validation", () => {
   });
 
   it("should validate numeric props and handle invalid values", () => {
-    // @ts-expect-error Testing invalid input
     const { container } = render(
-      <AnimatedText duration="<script>alert(1)</script>" staggerDelay={NaN}>
+      // @ts-expect-error Testing invalid input
+      <AnimatedText duration="<script>alert(1)</script>" staggerDelay={NaN} as any>
         Test
       </AnimatedText>
     );

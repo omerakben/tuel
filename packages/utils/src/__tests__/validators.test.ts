@@ -11,7 +11,7 @@ import {
   validateAnimationVariant,
   validateSplitType,
   validateProps,
-} from "../src/validators";
+} from "../validators";
 
 describe("Input Validation Utilities", () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;

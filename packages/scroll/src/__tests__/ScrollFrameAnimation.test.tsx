@@ -20,10 +20,14 @@ vi.mock("gsap/ScrollTrigger", () => ({
 }));
 
 // Mock @tuel/utils
-vi.mock("@tuel/utils", () => ({
-  cn: (...args: any[]) => args.filter(Boolean).join(" "),
-  isClient: true,
-}));
+vi.mock("@tuel/utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tuel/utils")>();
+  return {
+    ...actual,
+    cn: (...args: any[]) => args.filter(Boolean).join(" "),
+    isClient: true,
+  };
+});
 
 describe("ScrollFrameAnimation", () => {
   const mockFramePath = (index: number) =>

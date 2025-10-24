@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+dist
+.next
+out
+build
+
+# Coverage
+coverage
+.nyc_output
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode
+.idea
+
+# Test results
+test-results
+playwright-report
+
+# Temporary files
+*.tmp
+*.temp
+.cache

@@ -5,17 +5,21 @@
 ### Quick Start
 
 1. **Run setup script:**
+
    ```bash
    ./scripts/setup-github-packages.sh
    ```
+
    Or set up manually following [docs/github-packages-setup.md](./docs/github-packages-setup.md)
 
 2. **Build all packages:**
+
    ```bash
    pnpm build
    ```
 
 3. **Publish all packages:**
+
    ```bash
    pnpm --filter "@tuel/*" exec npm publish
    ```
@@ -23,12 +27,14 @@
 ### Using GitHub Actions
 
 **Trigger via tag:**
+
 ```bash
 git tag v0.2.1
 git push origin v0.2.1
 ```
 
 The workflow will automatically:
+
 - Build all packages
 - Run tests
 - Publish to GitHub Packages
@@ -38,12 +44,14 @@ The workflow will automatically:
 ### For Consumers
 
 1. **Create `.npmrc` in your project:**
+
    ```
    @tuel:registry=https://npm.pkg.github.com
    //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
    ```
 
 2. **Install packages:**
+
    ```bash
    npm install @tuel/motion @tuel/scroll
    ```
@@ -51,6 +59,7 @@ The workflow will automatically:
 ### For Public Access (Future)
 
 When published to npmjs.org, packages can be installed without authentication:
+
 ```bash
 npm install @tuel/motion
 ```
@@ -67,6 +76,7 @@ npm install @tuel/motion
 ### Future Strategy (Changesets)
 
 Will implement automated version management with changesets:
+
 ```bash
 pnpm changeset add
 pnpm changeset version
@@ -80,16 +90,19 @@ See [docs/github-packages-setup.md](./docs/github-packages-setup.md) for detaile
 ### Quick Fixes
 
 **Authentication issues:**
+
 ```bash
 npm whoami --registry=https://npm.pkg.github.com
 ```
 
 **Version conflicts:**
+
 ```bash
 npm version patch  # Increment version
 ```
 
 **View published packages:**
+
 ```bash
 open https://github.com/omerakben/tuel/packages
 ```

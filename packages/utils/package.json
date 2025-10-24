@@ -24,6 +24,7 @@
     "@tuel/tokens": "^0.2.0"
   },
   "devDependencies": {
+    "@types/node": "^24.9.1",
     "tsup": "^8.0.1",
     "typescript": "^5"
   },

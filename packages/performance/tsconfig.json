@@ -6,14 +6,9 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "types": [
-      "@testing-library/jest-dom",
-      "vitest/globals"
-    ]
+    "types": ["node", "@testing-library/jest-dom", "vitest/globals"]
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",

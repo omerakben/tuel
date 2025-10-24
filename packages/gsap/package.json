@@ -27,6 +27,7 @@
     "gsap": ">=3.12.0"
   },
   "devDependencies": {
+    "@types/node": "^20.19.10",
     "tsup": "^8.0.1",
     "typescript": "^5"
   },

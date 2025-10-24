@@ -23,10 +23,10 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
     "framer-motion": ">=11.0.0",
-    "gsap": ">=3.12.0"
+    "gsap": ">=3.12.0",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "dependencies": {
     "@tuel/utils": "^0.2.0",
@@ -34,6 +34,7 @@
     "clsx": "^2.1.1"
   },
   "devDependencies": {
+    "@types/node": "^24.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "react": "^18.3.1",

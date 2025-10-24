@@ -1,0 +1,102 @@
+name: Publish to npm & GitHub Packages
+
+on:
+    push:
+        tags:
+            - "v*.*.*"
+    release:
+        types: [published]
+    workflow_dispatch:
+        inputs:
+            registry:
+                description: "Registry to publish to"
+                required: true
+                type: choice
+                options:
+                    - "both"
+                    - "github"
+                    - "npm"
+                default: "both"
+
+permissions:
+    contents: read
+    packages: write
+
+jobs:
+    publish-github:
+        if: ${{ github.event.inputs.registry == 'github' || github.event.inputs.registry == 'both' || github.event.inputs.registry == '' }}
+        runs-on: ubuntu-latest
+        name: Publish to GitHub Packages
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.14.0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  registry-url: "https://npm.pkg.github.com"
+                  scope: "@tuel"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build all packages
+              run: pnpm build
+
+            - name: Publish to GitHub Packages
+              run: |
+                  echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+                  echo "@tuel:registry=https://npm.pkg.github.com" >> ~/.npmrc
+                  pnpm --filter "@tuel/*" exec npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Summary
+              run: |
+                  echo "✅ Published to GitHub Packages" >> $GITHUB_STEP_SUMMARY
+                  echo "View at: https://github.com/${{ github.repository }}/packages" >> $GITHUB_STEP_SUMMARY
+
+    publish-npm:
+        if: ${{ github.event.inputs.registry == 'npm' || github.event.inputs.registry == 'both' || (github.event.inputs.registry == '' && secrets.NPM_TOKEN != '') }}
+        runs-on: ubuntu-latest
+        name: Publish to npmjs.org
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.14.0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  registry-url: "https://registry.npmjs.org"
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build all packages
+              run: pnpm build
+
+            - name: Publish to npm
+              run: |
+                  echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+                  pnpm --filter "@tuel/*" exec npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Summary
+              run: |
+                  echo "✅ Published to npmjs.org" >> $GITHUB_STEP_SUMMARY
+                  echo "View at: https://www.npmjs.com/search?q=%40tuel" >> $GITHUB_STEP_SUMMARY

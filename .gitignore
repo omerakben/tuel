@@ -54,3 +54,9 @@ lerna-debug.log*
 .yarn
 README_OLD_INTERNAL.md
 README_DEV_NOTES.md
+
+# NPM authentication (contains tokens)
+# Note: Root .npmrc is tracked for registry config only (no tokens)
+# User-specific .npmrc with tokens should be in ~/.npmrc
+.npmrc.local
+.yarnrc.yml

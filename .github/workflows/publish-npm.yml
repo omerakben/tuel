@@ -1,0 +1,93 @@
+name: Publish to GitHub Packages
+
+on:
+    push:
+        tags:
+            - "v*.*.*"
+    release:
+        types: [published]
+    workflow_dispatch:
+        inputs:
+            package:
+                description: "Package to publish (leave empty for all)"
+                required: false
+                type: string
+
+permissions:
+    contents: read
+    packages: write
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  registry-url: "https://npm.pkg.github.com"
+                  scope: "@tuel"
+
+            - name: Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.14.0
+                  run_install: false
+
+            - name: Get pnpm store directory
+              shell: bash
+              run: |
+                  echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+            - name: Setup pnpm cache
+              uses: actions/cache@v4
+              with:
+                  path: ${{ env.STORE_PATH }}
+                  key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-pnpm-store-
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build all packages
+              run: pnpm build
+
+            - name: Configure npm authentication
+              run: |
+                  echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+                  echo "@tuel:registry=https://npm.pkg.github.com" >> ~/.npmrc
+
+            - name: Publish single package
+              if: ${{ github.event.inputs.package != '' }}
+              run: |
+                  cd packages/${{ github.event.inputs.package }}
+                  npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Publish all packages
+              if: ${{ github.event.inputs.package == '' }}
+              run: |
+                  pnpm --filter "@tuel/*" exec npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create release summary
+              if: success()
+              run: |
+                  echo "## 📦 Published Packages" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "Successfully published to GitHub Packages:" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  if [ -n "${{ github.event.inputs.package }}" ]; then
+                    echo "- @tuel/${{ github.event.inputs.package }}" >> $GITHUB_STEP_SUMMARY
+                  else
+                    echo "- All @tuel packages" >> $GITHUB_STEP_SUMMARY
+                  fi
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "View packages at: https://github.com/${{ github.repository }}/packages" >> $GITHUB_STEP_SUMMARY

@@ -73,7 +73,7 @@
     "generate:component": "node scripts/component-generator.js generate",
     "generate:list": "node scripts/component-generator.js list",
     "audit:security": "node scripts/security-audit.js",
-    "audit:deps": "npm audit --audit-level=moderate",
+    "audit:deps": "pnpm audit --audit-level=moderate",
     "audit:all": "pnpm audit:deps && pnpm audit:security",
     "docs:generate": "node scripts/generate-api-docs.js",
     "docs:serve": "npx serve docs",

@@ -72,7 +72,7 @@ jobs:
           args: --severity-threshold=high
 
       - name: Upload security scan results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: security-scan-results
@@ -138,7 +138,7 @@ jobs:
         run: pnpm test:security
 
       - name: Upload security test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: security-test-results
           path: test-results/
@@ -197,7 +197,7 @@ jobs:
           fi
 
       - name: Upload audit results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: audit-results
           path: audit-results.json

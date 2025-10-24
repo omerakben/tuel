@@ -153,7 +153,7 @@ jobs:
         run: pnpm bundle:analyze
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
@@ -222,7 +222,7 @@ jobs:
         run: pnpm test:performance-benchmark
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
@@ -326,7 +326,7 @@ jobs:
         run: pnpm performance:report
 
       - name: Upload performance results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: performance-results
           path: performance-results/
@@ -424,7 +424,7 @@ jobs:
         run: pnpm docs:generate
 
       - name: Upload documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/
@@ -482,7 +482,7 @@ jobs:
         run: pnpm release:notes
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-artifacts
           path: |
@@ -501,7 +501,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download release artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: release-artifacts
 

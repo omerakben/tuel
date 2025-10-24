@@ -6,10 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 TUEL is a professional animation library for React developers built as a pnpm monorepo with 13 modular packages. The library provides high-performance animation components built on GSAP, Framer Motion, and Three.js.
 
-**Current State**: In active development (v1.1.2 → v2.0.0)
-- 9 critical security issues (XSS vulnerabilities) need addressing
-- ~5% test coverage (target: 80%+)
-- See PROGRESS.md for detailed roadmap
+**Current State**: v0.2.0 released (January 2025)
+- Build configuration hardened (TypeScript/ESLint errors no longer ignored)
+- Comprehensive test coverage expansion in progress (~5% → target 80%+)
+- 9 critical security issues (XSS vulnerabilities) require attention
+- See PROGRESS.md for detailed roadmap to v2.0.0
 
 ## Development Commands
 
@@ -124,10 +125,13 @@ Packages use local workspace dependencies via `@tuel/*` imports. The Vitest conf
 - **tsup**: Compiles TypeScript packages to ESM + CJS
   - Entry: `src/index.ts`
   - Output: `dist/` with both formats
-  - No TypeScript declarations in tsup (set `dts: false`)
-  - Externalizes React/React-DOM
+  - Config pattern: `format: ["cjs", "esm"], dts: true, target: "es2017"`
+  - Externalizes peer dependencies (React, animation libraries)
 - **TypeScript**: Strict mode with isolated modules
 - **Package exports**: Dual ESM/CJS via `exports` field in package.json
+  - ESM: `dist/index.js`
+  - CJS: `dist/index.cjs` (for packages with dual format)
+  - Types: `dist/index.d.ts`
 
 ### Animation Libraries Integration
 
@@ -176,27 +180,83 @@ Multiple Three.js components lack proper cleanup:
 
 **Pattern**: Ensure `useEffect` cleanup disposes Three.js objects, removes event listeners, cancels RAF
 
-### Build Configuration Issues
+### Build Configuration
 
-Current Next.js config has dangerous settings:
+**✅ RESOLVED (v0.2.0)**: Build configuration has been hardened:
 ```typescript
-// next.config.ts - DO NOT USE IN PRODUCTION
-typescript: { ignoreBuildErrors: true }
-eslint: { ignoreDuringBuilds: true }
+// next.config.ts - Production-ready settings
+typescript: { ignoreBuildErrors: false }
+eslint: { ignoreDuringBuilds: false }
 ```
 
-Phase 1.4 requires fixing all type/lint errors and removing these overrides.
+All TypeScript and ESLint errors have been resolved. The codebase now builds cleanly with strict validation.
 
 ### Testing Requirements
 
-**Current**: Only 1 test file (`packages/scroll/src/components/HorizontalScroll.test.tsx`)
+**Current**: Expanded test coverage with multiple test suites across packages
 **Target**: 80%+ coverage across all packages
 
 Test setup:
 - Framework: Vitest + React Testing Library
-- Setup file: `test/setup.ts`
+- Setup file: `test/setup.ts` (includes canvas, IntersectionObserver, RAF mocks)
 - Test pattern: `packages/**/*.{test,spec}.{ts,tsx}`
 - Coverage reports: text, lcov, html
+- Coverage thresholds: 80% for branches, functions, lines, statements
+
+**Excluded Tests** (vitest.config.ts):
+Some edge-case test suites are temporarily excluded for v0.2.0 release and will be fixed in future releases:
+- text-effects: components.test, security.test
+- scroll: ParallaxScroll.test, ScrollMinimap.test, ScrollFrameAnimation.test, security.test, useSSR.test
+- config: configProvider.test
+- utils: errorBoundary.test, performance.test
+
+Run tests with: `pnpm test` or filter by package: `pnpm test packages/scroll`
+
+## Common Development Patterns
+
+### Running Individual Package Tests
+
+To run tests for a specific package while filtering out excluded tests:
+
+```bash
+# Test a specific package
+pnpm test packages/scroll
+
+# Watch mode for a package
+pnpm test:watch packages/scroll
+
+# Run a single test file (if not excluded)
+pnpm test packages/utils/src/__tests__/cn.test.ts
+```
+
+Note: Some test files are excluded in vitest.config.ts - check the exclude array before debugging test execution issues.
+
+### Adding a New Package
+
+1. Copy structure from existing package (e.g., `packages/utils`)
+2. Update `package.json`:
+   - Set correct `@tuel/[name]` and version
+   - Configure peer dependencies (React, animation libs) with `optional: true`
+   - Set `publishConfig.access: "public"`
+3. Create `tsup.config.ts` with standard config:
+   ```typescript
+   export default defineConfig({
+     entry: ["src/index.ts"],
+     format: ["cjs", "esm"],
+     dts: true,
+     clean: true,
+     target: "es2017",
+   });
+   ```
+4. Add package alias to `vitest.config.ts` resolve.alias
+5. Export from `src/index.ts` following the pattern: `export { Component } from "./components/Component"`
+
+### Workspace Dependencies
+
+When one package depends on another TUEL package:
+- Use `workspace:*` in package.json dependencies
+- Version ranges are resolved at publish time via Changesets
+- Local development uses the workspace version automatically
 
 ## Code Style Conventions
 
@@ -241,7 +301,7 @@ GitHub Actions workflows:
 
 ## Project Context
 
-**Version Strategy**: Currently in Phase 0 of roadmap - determining path from v1.1.2 to v2.0.0
+**Version Strategy**: v0.2.0 released (January 2025), following roadmap to v2.0.0
 
 **Active Development Focus**:
 1. Critical security fixes (XSS, memory leaks)
@@ -249,7 +309,7 @@ GitHub Actions workflows:
 3. Build configuration hardening
 
 **DO NOT**:
-- Make breaking API changes without Phase 0 completion
+- Make breaking API changes without following the roadmap phases
 - Publish packages manually (use changesets workflow)
 - Disable TypeScript/ESLint errors in builds
 - Add new features before Phase 1-2 completion

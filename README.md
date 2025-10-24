@@ -1,18 +1,68 @@
+<div align="center">
+
 # 🎨 TUEL Animation Library
 
 **The professional animation library for React developers**
 
-[![NPM Packages](https://img.shields.io/badge/npm-13%20packages-brightgreen)](https://www.npmjs.com/search?q=%40tuel)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://typescriptlang.org)
-[![Demo](https://img.shields.io/badge/demo-live-success)](https://tuel-animation.vercel.app)
-[![Status](https://img.shields.io/badge/status-alpha-yellow)](PROGRESS.md)
+<p align="center">
+  <a href="https://www.npmjs.com/search?q=%40tuel"><img src="https://img.shields.io/badge/npm-13%20packages-brightgreen" alt="NPM Packages"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <a href="https://typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0-blue" alt="TypeScript"></a>
+  <a href="https://tuel-animation.vercel.app"><img src="https://img.shields.io/badge/demo-live-success" alt="Demo"></a>
+  <a href="PROGRESS.md"><img src="https://img.shields.io/badge/status-alpha-yellow" alt="Status"></a>
+</p>
 
-Transform your React applications with beautiful, performant animations. TUEL provides a comprehensive suite of animation components built on industry-standard libraries like GSAP, Framer Motion, and Three.js.
+<p align="center">
+  Transform your React applications with beautiful, performant animations.<br/>
+  TUEL provides a comprehensive suite of animation components built on industry-standard libraries like GSAP, Framer Motion, and Three.js.
+</p>
 
-> ⚠️ **Development Notice**: TUEL is currently in early alpha development (v0.2.0). All 13 packages are functional but undergoing active improvements including security hardening, test coverage expansion (target: 80%+), and CI/CD optimizations. See [PROGRESS.md](PROGRESS.md) for detailed status and roadmap.
+<p align="center">
+  <strong>
+    <a href="https://tuel-animation.vercel.app">🚀 View Live Demo</a> •
+    <a href="https://tuel-lib.vercel.app">📚 Documentation</a> •
+    <a href="https://www.npmjs.com/search?q=%40tuel">📦 NPM Packages</a>
+  </strong>
+</p>
 
-🚀 **[View Live Demo](https://tuel-animation.vercel.app)** | 📚 **[Documentation](https://tuel-lib.vercel.app)** | 📦 **[NPM Packages](https://www.npmjs.com/search?q=%40tuel)**
+</div>
+
+<br/>
+
+> [!WARNING]
+> **Development Notice**: TUEL is currently in early alpha development (v0.2.0). All 13 packages are functional but undergoing active improvements including security hardening, test coverage expansion (target: 80%+), and CI/CD optimizations. See [PROGRESS.md](PROGRESS.md) for detailed status and roadmap.
+
+<br/>
+
+---
+
+## � Table of Contents
+
+- [🎨 TUEL Animation Library](#-tuel-animation-library)
+  - [� Table of Contents](#-table-of-contents)
+  - [✨ Features](#-features)
+  - [📦 Quick Start](#-quick-start)
+  - [🎭 Simple Example](#-simple-example)
+  - [📦 Complete Package Ecosystem](#-complete-package-ecosystem)
+  - [🛠 Development](#-development)
+    - [🔧 Tech Stack](#-tech-stack)
+    - [⚡ CI/CD Status](#-cicd-status)
+    - [📦 Local Development](#-local-development)
+    - [📁 Project Structure](#-project-structure)
+  - [🧪 Testing](#-testing)
+  - [📚 Documentation](#-documentation)
+  - [🤝 Contributing](#-contributing)
+    - [Getting Started](#getting-started)
+    - [💡 Contribution Philosophy](#-contribution-philosophy)
+    - [📚 Full Guidelines](#-full-guidelines)
+  - [📊 Project Status](#-project-status)
+    - [Current Release: v0.2.0 (Alpha)](#current-release-v020-alpha)
+  - [🐛 Issues \& Support](#-issues--support)
+  - [📄 License](#-license)
+  - [🙏 Acknowledgments](#-acknowledgments)
+  - [🔗 Links](#-links)
+
+---
 
 ## ✨ Features
 
@@ -77,21 +127,26 @@ function MyApp() {
 
 ## 📦 Complete Package Ecosystem
 
-| Package              | Description                         | Size    | npm                                                                                                             |
-| -------------------- | ----------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
-| [@tuel/motion]       | Motion primitives & animations      | 6.9 kB  | [![npm](https://img.shields.io/npm/v/@tuel/motion.svg)](https://www.npmjs.com/package/@tuel/motion)             |
-| [@tuel/scroll]       | Scroll-triggered animations         | 37.7 kB | [![npm](https://img.shields.io/npm/v/@tuel/scroll.svg)](https://www.npmjs.com/package/@tuel/scroll)             |
-| [@tuel/gallery]      | Interactive image & video galleries | 49.9 kB | [![npm](https://img.shields.io/npm/v/@tuel/gallery.svg)](https://www.npmjs.com/package/@tuel/gallery)           |
-| [@tuel/text-effects] | Typography animations               | 7.2 kB  | [![npm](https://img.shields.io/npm/v/@tuel/text-effects.svg)](https://www.npmjs.com/package/@tuel/text-effects) |
-| [@tuel/ui]           | Pre-built UI animation components   | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/ui.svg)](https://www.npmjs.com/package/@tuel/ui)                     |
-| [@tuel/interaction]  | Mouse, touch & gesture interactions | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/interaction.svg)](https://www.npmjs.com/package/@tuel/interaction)   |
-| [@tuel/gsap]         | GSAP integration utilities          | 1.8 kB  | [![npm](https://img.shields.io/npm/v/@tuel/gsap.svg)](https://www.npmjs.com/package/@tuel/gsap)                 |
-| [@tuel/three]        | Three.js 3D components              | 4.5 kB  | [![npm](https://img.shields.io/npm/v/@tuel/three.svg)](https://www.npmjs.com/package/@tuel/three)               |
-| [@tuel/performance]  | Performance optimization hooks      | 6.4 kB  | [![npm](https://img.shields.io/npm/v/@tuel/performance.svg)](https://www.npmjs.com/package/@tuel/performance)   |
-| [@tuel/state]        | Animation state management          | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/state.svg)](https://www.npmjs.com/package/@tuel/state)               |
-| [@tuel/config]       | Configuration system & presets      | 2.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/config.svg)](https://www.npmjs.com/package/@tuel/config)             |
-| [@tuel/tokens]       | Design tokens & theme system        | 4.8 kB  | [![npm](https://img.shields.io/npm/v/@tuel/tokens.svg)](https://www.npmjs.com/package/@tuel/tokens)             |
-| [@tuel/utils]        | Core utilities                      | 1.4 kB  | [![npm](https://img.shields.io/npm/v/@tuel/utils.svg)](https://www.npmjs.com/package/@tuel/utils)               |
+<details open>
+<summary><strong>📚 Click to view all 13 packages</strong></summary>
+
+<br/>
+
+| Package                  | Description                         | Size    | Version                                                                                                         |
+| ------------------------ | ----------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+| **[@tuel/motion]**       | Motion primitives & animations      | 6.9 kB  | [![npm](https://img.shields.io/npm/v/@tuel/motion.svg)](https://www.npmjs.com/package/@tuel/motion)             |
+| **[@tuel/scroll]**       | Scroll-triggered animations         | 37.7 kB | [![npm](https://img.shields.io/npm/v/@tuel/scroll.svg)](https://www.npmjs.com/package/@tuel/scroll)             |
+| **[@tuel/gallery]**      | Interactive image & video galleries | 49.9 kB | [![npm](https://img.shields.io/npm/v/@tuel/gallery.svg)](https://www.npmjs.com/package/@tuel/gallery)           |
+| **[@tuel/text-effects]** | Typography animations               | 7.2 kB  | [![npm](https://img.shields.io/npm/v/@tuel/text-effects.svg)](https://www.npmjs.com/package/@tuel/text-effects) |
+| **[@tuel/ui]**           | Pre-built UI animation components   | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/ui.svg)](https://www.npmjs.com/package/@tuel/ui)                     |
+| **[@tuel/interaction]**  | Mouse, touch & gesture interactions | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/interaction.svg)](https://www.npmjs.com/package/@tuel/interaction)   |
+| **[@tuel/gsap]**         | GSAP integration utilities          | 1.8 kB  | [![npm](https://img.shields.io/npm/v/@tuel/gsap.svg)](https://www.npmjs.com/package/@tuel/gsap)                 |
+| **[@tuel/three]**        | Three.js 3D components              | 4.5 kB  | [![npm](https://img.shields.io/npm/v/@tuel/three.svg)](https://www.npmjs.com/package/@tuel/three)               |
+| **[@tuel/performance]**  | Performance optimization hooks      | 6.4 kB  | [![npm](https://img.shields.io/npm/v/@tuel/performance.svg)](https://www.npmjs.com/package/@tuel/performance)   |
+| **[@tuel/state]**        | Animation state management          | 6.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/state.svg)](https://www.npmjs.com/package/@tuel/state)               |
+| **[@tuel/config]**       | Configuration system & presets      | 2.0 kB  | [![npm](https://img.shields.io/npm/v/@tuel/config.svg)](https://www.npmjs.com/package/@tuel/config)             |
+| **[@tuel/tokens]**       | Design tokens & theme system        | 4.8 kB  | [![npm](https://img.shields.io/npm/v/@tuel/tokens.svg)](https://www.npmjs.com/package/@tuel/tokens)             |
+| **[@tuel/utils]**        | Core utilities                      | 1.4 kB  | [![npm](https://img.shields.io/npm/v/@tuel/utils.svg)](https://www.npmjs.com/package/@tuel/utils)               |
 
 [@tuel/motion]: ./packages/motion
 [@tuel/scroll]: ./packages/scroll
@@ -107,34 +162,76 @@ function MyApp() {
 [@tuel/tokens]: ./packages/tokens
 [@tuel/utils]: ./packages/utils
 
+</details>
+
+<br/>
+
+---
+
+---
+
 ## 🛠 Development
 
-This repository contains the complete TUEL animation library monorepo.
+<div align="center">
+  <strong>This repository contains the complete TUEL animation library monorepo.</strong>
+</div>
 
-### Tech Stack
+<br/>
 
-- **TypeScript 5** - Type-safe animation development
-- **React 19** - Latest React features and optimizations
-- **Next.js 16** - Framework for demo application
-- **Turborepo 2.5** - High-performance build system
-- **pnpm 10.14** - Fast, disk space efficient package manager
-- **Vitest 2.x** - Unit testing with React Testing Library
-- **Playwright 1.56** - Cross-browser E2E testing
-- **ESLint 9** - Flat config linting (lenient mode for development)
+### 🔧 Tech Stack
 
-### CI/CD Status
+<table>
+<tr>
+<td width="50%">
 
-✅ **Optimized Pipeline** - Simplified to 5-minute builds for cost efficiency:
+**Core Technologies**
 
-- **Type Checking**: Strict TypeScript validation (blocking)
-- **Build**: All 13 packages compile successfully (blocking)
-- **Linting**: 0 errors, 788 warnings (non-blocking, development-friendly)
-- **Testing**: 204/224 tests passing (non-blocking, improvements ongoing)
-- **Security Audit**: 1 low severity issue (non-blocking)
+- 💎 **TypeScript 5** - Type-safe development
+- ⚛️ **React 19** - Latest React features
+- 🚀 **Next.js 16** - Demo framework
+- 📦 **pnpm 10.14** - Package manager
 
-The CI/CD pipeline prioritizes fast feedback and cost efficiency. Only critical quality gates (typecheck + build) are blocking to enable rapid iteration.
+</td>
+<td width="50%">
 
-### Local Development
+**Development Tools**
+
+- 🏗️ **Turborepo 2.5** - Build system
+- 🧪 **Vitest 2.x** - Unit testing
+- 🎭 **Playwright 1.56** - E2E testing
+- 🔍 **ESLint 9** - Linting (lenient mode)
+
+</td>
+</tr>
+</table>
+
+### ⚡ CI/CD Status
+
+<details>
+<summary><strong>✅ Optimized Pipeline - Simplified to 5-minute builds for cost efficiency</strong></summary>
+
+<br/>
+
+| Quality Gate       | Status         | Details                                       |
+| ------------------ | -------------- | --------------------------------------------- |
+| **Type Checking**  | 🟢 Blocking     | Strict TypeScript validation                  |
+| **Build**          | 🟢 Blocking     | All 13 packages compile successfully          |
+| **Linting**        | 🟡 Non-blocking | 0 errors, 788 warnings (development-friendly) |
+| **Testing**        | 🟡 Non-blocking | 204/224 tests passing (improvements ongoing)  |
+| **Security Audit** | 🟡 Non-blocking | 1 low severity issue                          |
+
+> **Philosophy**: The CI/CD pipeline prioritizes fast feedback and cost efficiency. Only critical quality gates (typecheck + build) are blocking to enable rapid iteration.
+
+</details>
+
+<br/>
+
+### 📦 Local Development
+
+<details>
+<summary><strong>💻 Setup Instructions</strong></summary>
+
+<br/>
 
 ```bash
 # Clone the repository
@@ -160,7 +257,14 @@ pnpm typecheck
 pnpm lint
 ```
 
-### Project Structure
+</details>
+
+### 📁 Project Structure
+
+<details>
+<summary><strong>🗂️ Repository Layout</strong></summary>
+
+<br/>
 
 ```plaintext
 tuel/
@@ -182,6 +286,12 @@ tuel/
 ├── .github/           # CI/CD workflows
 └── scripts/           # Build and automation scripts
 ```
+
+</details>
+
+<br/>
+
+---
 
 ## 🧪 Testing
 
@@ -210,9 +320,69 @@ Each package has comprehensive documentation in its README:
 
 Visit [tuel.ai/docs](https://tuel.ai/docs) for complete documentation.
 
+---
+
 ## 🤝 Contributing
 
-We welcome contributions! TUEL is in active alpha development and community input is valuable. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on:
+<div align="center">
+
+**We welcome contributions!** TUEL is in active alpha development and community input is valuable.
+
+[![Contributors](https://img.shields.io/github/contributors/omerakben/tuel?style=for-the-badge)](https://github.com/omerakben/tuel/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](CONTRIBUTING.md)
+
+</div>
+
+<br/>
+
+<details>
+<summary><strong>📋 Quick Contribution Guide</strong></summary>
+
+<br/>
+
+### Getting Started
+
+1. **Fork the repository**
+2. **Clone your fork**:
+
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/tuel.git
+   ```
+
+3. **Install dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+4. **Build packages**:
+
+   ```bash
+   pnpm build
+   ```
+
+5. **Make your changes**
+6. **Run typecheck** (must pass):
+
+   ```bash
+   pnpm typecheck
+   ```
+
+7. **Run build** (must pass):
+
+   ```bash
+   pnpm build
+   ```
+
+8. **Submit a pull request**
+
+### 💡 Contribution Philosophy
+
+> **Note**: Lint warnings and test failures won't block your PR. We prioritize contributor experience while maintaining core quality standards.
+
+### 📚 Full Guidelines
+
+For detailed information, see [CONTRIBUTING.md](CONTRIBUTING.md):
 
 - Code of Conduct
 - Development workflow (simplified CI/CD for faster iterations)
@@ -220,45 +390,70 @@ We welcome contributions! TUEL is in active alpha development and community inpu
 - Coding standards (lenient ESLint configuration)
 - Testing requirements (non-blocking tests for easier contribution)
 
-### Quick Contribution Guide
+</details>
 
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/tuel.git`
-3. Install dependencies: `pnpm install`
-4. Build packages: `pnpm build`
-5. Make your changes
-6. Run typecheck: `pnpm typecheck` (must pass)
-7. Run build: `pnpm build` (must pass)
-8. Submit a pull request
+<br/>
 
-**Note**: Lint warnings and test failures won't block your PR. We prioritize contributor experience while maintaining core quality standards.
+---
+
+---
 
 ## 📊 Project Status
 
-### Current (v0.2.0)
+<div align="center">
 
-- ✅ 13 packages published to npm (all at v0.2.0)
-- ✅ Full TypeScript support across all packages
-- ✅ Optimized CI/CD pipeline (~5 minutes, cost-efficient)
-- ✅ Core functionality working and production-ready
-- ✅ Live demo application on Vercel
-- ✅ Comprehensive package documentation
-- 🔄 Security improvements in progress
-- 🔄 Test coverage expansion (current: ~20%, target: 80%+)
-- 🔄 Performance monitoring and optimization
+### Current Release: v0.2.0 (Alpha)
 
-### Roadmap to v1.0.0
+![Progress](https://img.shields.io/badge/Progress-Active%20Development-yellow?style=for-the-badge)
+![Test Coverage](https://img.shields.io/badge/Coverage-~20%25-orange?style=for-the-badge)
+![Packages](https://img.shields.io/badge/Packages-13-brightgreen?style=for-the-badge)
 
-- 🎯 Security hardening (XSS prevention, input sanitization)
-- 🎯 Achieve 80%+ test coverage across all packages
-- 🎯 Performance benchmarks and optimizations
-- 🎯 Enhanced accessibility (WCAG 2.1 AA compliance)
-- 🎯 Bundle size analysis and reduction
-- 🎯 Improved API documentation with interactive examples
-- 🎯 Community contribution guidelines
-- 🎯 Storybook integration for component development
+</div>
 
-See [PROGRESS.md](PROGRESS.md) for detailed phase-by-phase status and weekly updates.
+<br/>
+
+<details open>
+<summary><strong>✅ Current Achievements (v0.2.0)</strong></summary>
+
+<br/>
+
+- ✅ **13 packages published to npm** (all at v0.2.0)
+- ✅ **Full TypeScript support** across all packages
+- ✅ **Optimized CI/CD pipeline** (~5 minutes, cost-efficient)
+- ✅ **Core functionality working** and production-ready
+- ✅ **Live demo application** on Vercel
+- ✅ **Comprehensive package documentation**
+- 🔄 **Security improvements** in progress
+- 🔄 **Test coverage expansion** (current: ~20%, target: 80%+)
+- 🔄 **Performance monitoring** and optimization
+
+</details>
+
+<details>
+<summary><strong>🎯 Roadmap to v1.0.0</strong></summary>
+
+<br/>
+
+| Feature                                                 | Status        | Priority |
+| ------------------------------------------------------- | ------------- | -------- |
+| Security hardening (XSS prevention, input sanitization) | 🔄 In Progress | 🔴 High   |
+| 80%+ test coverage across all packages                  | 🔄 In Progress | 🔴 High   |
+| Performance benchmarks and optimizations                | 📋 Planned     | 🟡 Medium |
+| Enhanced accessibility (WCAG 2.1 AA compliance)         | 📋 Planned     | 🟡 Medium |
+| Bundle size analysis and reduction                      | 📋 Planned     | 🟡 Medium |
+| Improved API documentation with interactive examples    | 📋 Planned     | 🟢 Low    |
+| Community contribution guidelines                       | 📋 Planned     | 🟢 Low    |
+| Storybook integration for component development         | 📋 Planned     | 🟢 Low    |
+
+</details>
+
+<br/>
+
+> **📈 Detailed Status**: See [PROGRESS.md](PROGRESS.md) for detailed phase-by-phase status and weekly updates.
+
+<br/>
+
+---
 
 ## 🐛 Issues & Support
 
@@ -281,14 +476,32 @@ TUEL is built on the shoulders of giants:
 - [Three.js](https://threejs.org/) - 3D graphics library
 - [React](https://react.dev/) - UI library
 
+---
+
 ## 🔗 Links
 
-- **Website**: [tuel.ai](https://tuel.ai)
-- **Documentation**: [tuel.ai/docs](https://tuel.ai/docs)
-- **Demo**: [tuel-animation.vercel.app](https://tuel-animation.vercel.app)
-- **npm**: [npmjs.com/search?q=@tuel](https://www.npmjs.com/search?q=%40tuel)
-- **GitHub**: [github.com/omerakben/tuel](https://github.com/omerakben/tuel)
+<div align="center">
+
+| Resource            | Link                                                               |
+| ------------------- | ------------------------------------------------------------------ |
+| 🌐 **Website**       | [tuel.ai](https://tuel.ai)                                         |
+| 📚 **Documentation** | [tuel.ai/docs](https://tuel.ai/docs)                               |
+| 🚀 **Demo**          | [tuel-animation.vercel.app](https://tuel-animation.vercel.app)     |
+| 📦 **npm**           | [npmjs.com/search?q=@tuel](https://www.npmjs.com/search?q=%40tuel) |
+| 💻 **GitHub**        | [github.com/omerakben/tuel](https://github.com/omerakben/tuel)     |
+
+</div>
+
+<br/>
 
 ---
 
+<div align="center">
+
 **Made with ❤️ by [Omer Akben](https://omerakben.com)**
+
+<br/>
+
+<sub>If you find TUEL useful, consider giving it a ⭐️ on GitHub!</sub>
+
+</div>
